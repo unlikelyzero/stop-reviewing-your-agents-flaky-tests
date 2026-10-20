@@ -73,8 +73,41 @@ https://github.com/playwright-community/eslint-plugin-playwright/tree/main/docs/
       </code></pre>
     </section>
 
+    <!-- ============================================================ WIRING -->
+    <section>
+      <p class="kicker">The mechanism · 1 of 2</p>
+      <h2>Wire it in before a browser ever launches</h2>
+      <pre><code class="language-json" data-trim>
+// .claude/settings.json
+{ "hooks": { "PostToolUse": [{
+    "matcher": "Edit|Write|MultiEdit",
+    "hooks": [{ "type": "command",
+                "command": "bash $CLAUDE_PROJECT_DIR/scripts/lint-hook.sh" }]
+}]}}
+      </code></pre>
+      <p class="small">Exit 2 + stderr → the fix instruction becomes the result of the agent's own edit.<br/>
+      Cursor: <code>hooks.json → afterFileEdit</code> · Copilot: pre-commit · Playwright MCP: same script in the tool wrapper.</p>
+    </section>
+
+    <section>
+      <p class="kicker">The mechanism · 2 of 2</p>
+      <h2>Rewrite messages as fix instructions</h2>
+      <div class="two-col">
+        <div>
+          <h3 class="muted">Stock</h3>
+          <blockquote>Unexpected use of page.waitForTimeout().</blockquote>
+        </div>
+        <div>
+          <h3>Rewritten</h3>
+          <blockquote>Remove page.waitForTimeout(). Replace it with the assertion you were waiting for: <code>await expect(locator).toBeVisible()</code>…<br/>If nothing observable changes, there is nothing to wait for.</blockquote>
+        </div>
+      </div>
+      <p class="small">Same rule. One repairs on the first try. <strong>Where</strong> the verdict lands + <strong>what</strong> it says = the "linted" setup in every demo that follows.</p>
+    </section>
+
     <!-- ============================================================ DEMO SETUP -->
     <section>
+      <p class="kicker">Does it work?</p>
       <h2>The experiment</h2>
       <ul>
         <li>App: <a href="https://github.com/theimaginaryfoundation/what-iff">what-iff</a> — Angular + Go, mock-LLM mode</li>
@@ -93,36 +126,6 @@ streamText   reply body arrives in chunks
 
     <!-- ============================================================ SEGMENTS (generated) -->
     <div id="segments"></div>
-
-    <!-- ============================================================ WIRING -->
-    <section>
-      <h2>Wire it in before a browser ever launches</h2>
-      <pre><code class="language-json" data-trim>
-// .claude/settings.json
-{ "hooks": { "PostToolUse": [{
-    "matcher": "Edit|Write|MultiEdit",
-    "hooks": [{ "type": "command",
-                "command": "bash $CLAUDE_PROJECT_DIR/scripts/lint-hook.sh" }]
-}]}}
-      </code></pre>
-      <p class="small">Exit 2 + stderr → the fix instruction becomes the result of the agent's own edit.<br/>
-      Cursor: <code>hooks.json → afterFileEdit</code> · Copilot: pre-commit · Playwright MCP: same script in the tool wrapper.</p>
-    </section>
-
-    <section>
-      <h2>Rewrite messages as fix instructions</h2>
-      <div class="two-col">
-        <div>
-          <h3 class="muted">Stock</h3>
-          <blockquote>Unexpected use of page.waitForTimeout().</blockquote>
-        </div>
-        <div>
-          <h3>Rewritten</h3>
-          <blockquote>Remove page.waitForTimeout(). Replace it with the assertion you were waiting for: <code>await expect(locator).toBeVisible()</code>…<br/>If nothing observable changes, there is nothing to wait for.</blockquote>
-        </div>
-      </div>
-      <p class="small">Same rule. One repairs on the first try.</p>
-    </section>
 
     <!-- ============================================================ RATCHET -->
     <section>
