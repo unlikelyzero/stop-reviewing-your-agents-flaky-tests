@@ -79,7 +79,10 @@
 .reveal pre code { background: var(--ts-navy-deep); }
 .reveal section[data-background-color="#0f1117"] { }
 .reveal .two-col h3 { color: var(--ts-sky); }
-.reveal .logo { position: fixed; left: 28px; bottom: 22px; height: 28px; opacity: 0.85; }
+.reveal .footer-brand { position: fixed; left: 28px; bottom: 22px; display: flex; align-items: center; gap: 12px; opacity: 0.85; z-index: 5; }
+.reveal .footer-brand .logo { height: 28px; }
+.reveal .footer-brand .logo.pw { height: 32px; }
+.reveal .footer-brand .x { color: var(--muted); font-size: 18px; }
 
 /* ---- pass/fail on the video pair ---- */
 .side .status { font-weight: 700; font-size: 0.8em; }
@@ -135,3 +138,14 @@
 .closing .cta p { font-size: 0.7em; margin: 0.4em 0; line-height: 1.3; }
 .closing .cta pre { margin-top: 0.8em; }
 .closing .byline { margin-top: 1em; }
+
+/* ---- Playwright × no-flake lockup ---- */
+.lockup { display: flex; justify-content: center; align-items: center; gap: 0.5em; margin-bottom: 0.3em; }
+.lockup .pw-logo { height: 3.2em; margin: 0; }
+.noflake { position: relative; display: inline-grid; place-items: center; width: 2.6em; height: 2.6em; border-radius: 50%;
+  border: 0.16em solid var(--base); color: #cfe9ff; font-size: 1em; line-height: 1; }
+.noflake .flake { font-size: 1.5em; }
+.noflake::after { content: ''; position: absolute; left: 50%; top: -0.1em; bottom: -0.1em; width: 0.16em; margin-left: -0.08em; background: var(--base); transform: rotate(45deg); border-radius: 1px; }
+.noflake.sm { width: 28px; height: 28px; border-width: 3px; font-size: 12px; }
+.noflake.sm .flake { font-size: 16px; }
+.noflake.sm::after { width: 3px; margin-left: -1.5px; }
