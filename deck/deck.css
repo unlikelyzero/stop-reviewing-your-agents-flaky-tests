@@ -157,3 +157,30 @@
 .agenda b { display: block; color: #fff; }
 .agenda span { display: block; grid-column: 2; font-size: 0.75em; color: var(--muted); }
 .pause .two-col ul { font-size: 0.7em; }
+
+/* ---- stage states for rule 2: attached → visible → stable → (banner) → loading ---- */
+.stage .st { display: none; }
+.stage .mock-send { opacity: 0; transition: opacity 0.4s, transform 0.4s; }
+.stage:has(.st1.visible) .mock-send { opacity: 1; color: transparent; background: transparent; border: 2px dashed rgba(255,255,255,0.35); }
+.stage:has(.st1.visible) .mock-send .spinner { display: none; }
+.stage:has(.st2.visible) .mock-send { color: #fff; background: #6D5AE6; border-color: transparent; animation: wobble 0.9s ease-in-out infinite; }
+.stage:has(.st3.visible) .mock-send { animation: none; }
+@keyframes wobble { 0%,100% { transform: translateX(0); } 50% { transform: translateX(14px); } }
+.stage:has(.st6.visible) .mock-send { background: #3b3f52; color: #aab; cursor: wait; }
+.stage:has(.st6.visible) .mock-send .label::after { content: 'ing…'; }
+.stage:has(.st6.visible) .mock-send .label { font-size: 0; }
+.stage:has(.st6.visible) .mock-send .label::before { content: 'Send'; font-size: 16px; }
+.mock-send .spinner { display: none; width: 12px; height: 12px; border: 2px solid #aab; border-top-color: transparent; border-radius: 50%; margin-right: 8px; vertical-align: -2px; animation: spin 0.8s linear infinite; }
+.stage:has(.st6.visible) .mock-send .spinner { display: inline-block; }
+.stage:has(.st6.visible) .mock-send .label::after { content: 'ing…'; font-size: 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.dom-label { position: absolute; left: 0; right: 0; top: 14px; color: var(--muted); font-weight: 600; }
+.stage:has(.mock-banner.visible) .dom-label { display: none; }
+.stage:has(.st6.visible) .mock-banner { transform: translateY(100%); }
+.stage:has(.st6.visible) .stage-label { display: none; }
+.stage:has(.st6.visible) .dom-label { display: block; color: #aab; }
+.stage:has(.st6.visible) .dom-label::after { content: ' — banner dismissed; the button is busy, still not clickable'; }
+.stage:has(.st6.visible) .dom-label { font-size: 0; }
+.stage:has(.st6.visible) .dom-label::after { content: 'banner dismissed — the button is now busy: attached, visible, stable, and still not clickable'; font-size: 16px; }
+.stage:has(.st6.visible) .crosshair { border-color: var(--muted); }
+.stage:has(.st6.visible) .crosshair::before, .stage:has(.st6.visible) .crosshair::after { background: var(--muted); }

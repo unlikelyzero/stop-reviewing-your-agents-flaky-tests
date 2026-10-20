@@ -342,22 +342,25 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
     <div class="lifecycle-wrap">
       <!-- a mock of the composer + the overlay seam, driven by the same fragment indices as the checks -->
       <div class="stage">
+        <!-- invisible markers: the stage reads which check is current via :has(.stN.visible) -->
+        <i class="st st1 fragment" data-fragment-index="1"></i><i class="st st2 fragment" data-fragment-index="2"></i><i class="st st3 fragment" data-fragment-index="3"></i><i class="st st6 fragment" data-fragment-index="6"></i>
         <div class="mock-composer">
           <div class="mock-input">Hello from the demo</div>
-          <button class="mock-send" type="button">Send message</button>
-          <div class="crosshair fragment" data-fragment-index="1"></div>
+          <button class="mock-send" type="button"><span class="spinner"></span><span class="label">Send message</span></button>
+          <div class="crosshair fragment" data-fragment-index="2"></div>
         </div>
+        <div class="dom-label fragment" data-fragment-index="1">&lt;button&gt; is in the DOM — and renders nothing</div>
         <div class="mock-banner fragment" data-fragment-index="4">
           <span>🎉 New: scheduled agents are live.</span><button type="button">Got it</button>
         </div>
         <div class="stage-label fragment" data-fragment-index="4">hit-test at (x,y) → <code>&lt;div role="dialog"&gt;</code>, not the button</div>
       </div>
       <ol class="lifecycle">
-        <li class="step fragment" data-fragment-index="1"><b>Attached</b><span>in the DOM</span></li>
+        <li class="step fragment" data-fragment-index="1"><b>Attached</b><span>in the DOM — says nothing about whether anyone can see it</span></li>
         <li class="step fragment" data-fragment-index="2"><b>Visible</b><span>non-empty box, not <code>visibility:hidden</code></span></li>
         <li class="step fragment" data-fragment-index="3"><b>Stable</b><span>same box across two animation frames</span></li>
         <li class="step fragment blocked" data-fragment-index="4"><b>Receives events</b><span>hit-test at the click point returns <em>this</em> element</span></li>
-        <li class="step fragment" data-fragment-index="6"><b>Enabled</b><span>not <code>disabled</code></span></li>
+        <li class="step fragment" data-fragment-index="6"><b>Enabled</b><span>not <code>disabled</code> — a <em>loading</em> button is attached, visible, stable… and still not clickable</span></li>
       </ol>
     </div>
     <div class="two-col lifecycle-outcomes">
