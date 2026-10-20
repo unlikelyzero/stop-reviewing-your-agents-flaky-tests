@@ -26,6 +26,7 @@ const segments = [
 ];
 
 // Playwright names result dirs like "<spec-file>-<test-title>-<project>[-retryN]" and puts video.webm inside.
+// Returns { webm, status, error } — a failed run leaves error-context.md (Playwright's snapshot + call log).
 function findVideo(project, specId) {
   if (!existsSync(showcaseDir)) return null;
   const dirs = readdirSync(showcaseDir).filter(d => d.startsWith(specId) && d.endsWith(`-${project}`));
@@ -33,7 +34,16 @@ function findVideo(project, specId) {
     const full = join(showcaseDir, d);
     if (!statSync(full).isDirectory()) continue;
     const webm = readdirSync(full).find(f => f.endsWith('.webm'));
-    if (webm) return join(full, webm);
+    if (!webm) continue;
+    const ctx = join(full, 'error-context.md');
+    if (!existsSync(ctx)) return { webm: join(full, webm), status: 'passed' };
+    const lines = readFileSync(ctx, 'utf8').split('\n');
+    const error = lines
+      .filter(l => /^(Error:|.*(Test )?[Tt]imeout|\s*- waiting for|.*strict mode violation|.*Expected|.*Received)/.test(l))
+      .map(l => l.trim())
+      .slice(0, 4)
+      .join('\n');
+    return { webm: join(full, webm), status: 'failed', error };
   }
   return null;
 }
@@ -42,16 +52,20 @@ const summary = existsSync(resolve(root, 'flake-lab/out/summary.json'))
   ? JSON.parse(readFileSync(resolve(root, 'flake-lab/out/summary.json'), 'utf8'))
   : { repeats: 0, projects: {} };
 
+// Merge with the previous data.json so partial re-runs (one rule at a time) keep earlier videos.
+const prevPath = resolve(root, 'deck/data.json');
+const prev = existsSync(prevPath) ? JSON.parse(readFileSync(prevPath, 'utf8')) : { segments: [] };
 const data = { generatedAt: new Date().toISOString(), repeats: summary.repeats, segments: [] };
 
 for (const seg of segments) {
-  const entry = { ...seg, baseline: {}, linted: {} };
+  const old = prev.segments.find(s => s.id === seg.id) ?? {};
+  const entry = { ...seg, baseline: { ...old.baseline }, linted: { ...old.linted } };
   for (const project of ['baseline', 'linted']) {
-    const src = findVideo(project, seg.id);
-    if (src) {
+    const found = findVideo(project, seg.id);
+    if (found) {
       const dest = `videos/${seg.id}.${project}.webm`;
-      copyFileSync(src, resolve(root, 'deck', dest));
-      entry[project].video = dest;
+      copyFileSync(found.webm, resolve(root, 'deck', dest));
+      Object.assign(entry[project], { video: dest, status: found.status, error: found.error ?? '' });
     }
     const stats = summary.projects?.[project]?.[seg.id];
     if (stats) Object.assign(entry[project], { passRate: stats.passRate, passed: stats.passed, failed: stats.failed, p50: stats.p50 });

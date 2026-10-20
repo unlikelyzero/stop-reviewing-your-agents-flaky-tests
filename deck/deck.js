@@ -82,8 +82,24 @@ function buildSegments(data) {
       if (seg[proj]?.video) {
         vid.src = seg[proj].video;
         side.classList.add('has-video');
+        const st = seg[proj].status;
+        if (st) {
+          side.classList.add(st);
+          node.querySelector(`.status-${cls}`).textContent = st === 'failed' ? '✖ failed' : '✔ passed';
+        }
+        // The recording stops at the failure, so "when" is the end of the video: show a clock
+        // while it plays and the error on top once it ends.
+        const clock = node.querySelector(`.clock-${cls}`);
+        const overlay = node.querySelector(`.fail-${cls}`);
+        overlay.textContent = seg[proj].error || (st === 'failed' ? 'failed' : '');
+        vid.addEventListener('timeupdate', () => (clock.textContent = `${vid.currentTime.toFixed(1)}s`));
+        vid.addEventListener('play', () => side.classList.remove('ended'));
+        vid.addEventListener('ended', () => side.classList.add('ended'));
       }
     }
+    // A rule can swap its video pair for a bespoke slide: <template id="alt-<seg.id>">.
+    const alt = document.getElementById(`alt-${seg.id}`);
+    if (alt) node.querySelector('.video-slide').replaceWith(alt.content.cloneNode(true));
     built.push(node);
   });
   mount.replaceWith(...built);
