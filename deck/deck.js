@@ -178,6 +178,7 @@ function togglePair(vids) {
     width: 1600,
     height: 900,
     margin: 0.06,
+    pdfSeparateFragments: false, // handout PDF: one page per slide, all fragments shown
     plugins: [RevealHighlight, RevealNotes],
     keyboard: {
       32: () => togglePair(pairOn(Reveal.getCurrentSlide())) || Reveal.next(), // space: toggle videos if any, else next
