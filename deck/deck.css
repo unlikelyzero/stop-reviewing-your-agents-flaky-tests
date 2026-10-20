@@ -98,7 +98,7 @@
 .mock-composer { position: absolute; left: 24px; right: 24px; top: 150px; display: flex; gap: 10px; align-items: center; }
 .mock-input { flex: 1; background: #1a1d26; color: #cfd3dc; border: 1px solid #343846; border-radius: 10px; padding: 12px 14px; text-align: left; }
 .mock-send { background: #6D5AE6; color: #fff; border: 0; border-radius: 10px; padding: 12px 18px; font: inherit; font-weight: 600; position: relative; }
-.crosshair { position: absolute; right: 52px; top: 50%; width: 28px; height: 28px; margin-top: -14px; border: 2px solid var(--lint); border-radius: 50%; }
+.crosshair { position: absolute; z-index: 2; right: 52px; top: 50%; width: 28px; height: 28px; margin-top: -14px; border: 2px solid var(--lint); border-radius: 50%; }
 .crosshair::before, .crosshair::after { content: ''; position: absolute; background: var(--lint); }
 .crosshair::before { left: 50%; top: -8px; bottom: -8px; width: 2px; margin-left: -1px; }
 .crosshair::after { top: 50%; left: -8px; right: -8px; height: 2px; margin-top: -1px; }
