@@ -118,3 +118,11 @@
 .lifecycle .step.blocked.visible b::before { content: '✖ '; color: var(--base); }
 .lifecycle-outcomes { margin-top: 0.2em; }
 .lifecycle-outcomes h3 { font-family: ui-monospace, monospace; text-transform: none; font-size: 0.8em; }
+
+/* ---- takeaways ---- */
+.takeaways { text-align: left; font-size: 0.75em; counter-reset: t; list-style: none; padding: 0; margin: 0.4em 0 0; display: grid; gap: 0.55em; }
+.takeaways li { display: grid; grid-template-columns: 1.6em 1fr; gap: 0.5em; align-items: baseline; }
+.takeaways li::before { counter-increment: t; content: counter(t); font-family: Oswald, sans-serif; font-size: 1.5em; color: var(--ts-orange); line-height: 1; }
+.takeaways b { display: block; color: #fff; }
+.takeaways span { display: block; font-size: 0.75em; color: var(--muted); }
+.takeaways code { font-size: 0.9em; }

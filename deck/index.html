@@ -210,13 +210,27 @@ APP-SIDE (13 uses of 9 selectors) — element has no accessible name. One ticket
       <div id="results-grid" class="results-grid"></div>
     </section>
 
+    <!-- ============================================================ TAKEAWAYS -->
+    <section data-background-color="#072A42">
+      <p class="kicker">Takeaways</p>
+      <h2>Five things to leave with</h2>
+      <ol class="takeaways">
+        <li class="fragment"><b>Prompts are suggestions. Lint is a verdict.</b><span>Keep AGENTS.md — but make it point at the rule docs, and make the rule the gate.</span></li>
+        <li class="fragment"><b>Put the verdict where the agent is.</b><span>A hook on the edit, not a comment on the PR. Same second, same file, same line.</span></li>
+        <li class="fragment"><b>The message is the fix.</b><span>Rewrite rule messages to say what to do instead; the agent repairs on the first try.</span></li>
+        <li class="fragment"><b>Turn everything on today. Fix nothing today.</b><span><code>--suppress-all</code> freezes the debt; the number only goes down.</span></li>
+        <li class="fragment"><b>80% of raw locators are an app bug.</b><span>No accessible name = not testable = not accessible. The suppressions file is your a11y backlog with line numbers.</span></li>
+      </ol>
+    </section>
+
     <section data-background-color="#072A42">
       <h2>Drop it in today</h2>
       <pre><code class="language-bash" data-trim>
 npm i -D eslint eslint-plugin-playwright typescript-eslint
 # copy eslint.config.mjs, eslint-rules/, scripts/lint-hook.sh, .claude/settings.json
       </code></pre>
-      <p class="byline">github.com/unlikelyzero/agent-flake-demo · <code>@unlikelyzero</code></p>
+      <p class="lead"><a href="https://github.com/unlikelyzero/stop-reviewing-your-agents-flaky-tests">github.com/unlikelyzero/stop-reviewing-your-agents-flaky-tests</a></p>
+      <p class="byline">specs, seams, rules, hook, ratchet, this deck · <code>@unlikelyzero</code> · with <strong>ThinkSys</strong></p>
     </section>
 
   </div>
