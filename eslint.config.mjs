@@ -54,7 +54,7 @@ export default tseslint.config(
 
   // ---- TREATMENT: tests/linted -----------------------------------------------------------
   {
-    files: ['tests/linted/**/*.ts'],
+    files: ['tests/linted/**/*.ts', 'tests/ratchet-demo/**/*.ts'],
     plugins: { playwright, demo },
     rules: {
       ...playwright.configs['flat/recommended'].rules,

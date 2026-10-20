@@ -3,3 +3,4 @@ test-results/
 flake-lab/out/
 deck/videos/*.webm
 deck/data.json
+.ratchet-empty.json

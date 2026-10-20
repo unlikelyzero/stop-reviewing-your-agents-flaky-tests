@@ -1,0 +1,79 @@
+{
+  "tests/ratchet-demo/01-hard-wait.spec.ts": {
+    "no-restricted-syntax": {
+      "count": 4
+    },
+    "playwright/no-nth-methods": {
+      "count": 1
+    },
+    "playwright/no-raw-locators": {
+      "count": 2
+    },
+    "playwright/no-wait-for-timeout": {
+      "count": 2
+    }
+  },
+  "tests/ratchet-demo/02-force-click.spec.ts": {
+    "no-restricted-syntax": {
+      "count": 1
+    },
+    "playwright/no-force-option": {
+      "count": 1
+    },
+    "playwright/no-raw-locators": {
+      "count": 1
+    }
+  },
+  "tests/ratchet-demo/03-nth-first.spec.ts": {
+    "no-restricted-syntax": {
+      "count": 2
+    },
+    "playwright/no-nth-methods": {
+      "count": 1
+    },
+    "playwright/no-raw-locators": {
+      "count": 2
+    }
+  },
+  "tests/ratchet-demo/04-raw-locator.spec.ts": {
+    "no-restricted-syntax": {
+      "count": 4
+    },
+    "playwright/no-raw-locators": {
+      "count": 4
+    }
+  },
+  "tests/ratchet-demo/05-web-first.spec.ts": {
+    "no-restricted-syntax": {
+      "count": 2
+    },
+    "playwright/no-element-handle": {
+      "count": 1
+    },
+    "playwright/no-raw-locators": {
+      "count": 1
+    },
+    "playwright/no-wait-for-selector": {
+      "count": 1
+    }
+  },
+  "tests/ratchet-demo/06-conditional.spec.ts": {
+    "no-restricted-syntax": {
+      "count": 3
+    },
+    "playwright/no-conditional-in-test": {
+      "count": 1
+    },
+    "playwright/no-networkidle": {
+      "count": 1
+    },
+    "playwright/no-raw-locators": {
+      "count": 3
+    }
+  },
+  "tests/ratchet-demo/helpers/selectors.ts": {
+    "no-restricted-syntax": {
+      "count": 1
+    }
+  }
+}

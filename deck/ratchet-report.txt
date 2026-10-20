@@ -1,0 +1,45 @@
+
+39 frozen violations on 21 lines (a plugin rule and its sharper no-restricted-syntax twin often hit the same line)
+
+TEST-SIDE (8) — fix in the spec, no app change. Hand these to the agent.
+  tests/ratchet-demo/01-hard-wait.spec.ts:13  playwright/no-wait-for-timeout
+      await page.waitForTimeout(1500); // wait for the chat page to load
+  tests/ratchet-demo/01-hard-wait.spec.ts:18  playwright/no-wait-for-timeout
+      await page.waitForTimeout(2000); // wait for the assistant to respond
+  tests/ratchet-demo/02-force-click.spec.ts:15  playwright/no-force-option
+      await page.getByRole('button', { name: 'Send message' }).click({ force: true });
+  tests/ratchet-demo/05-web-first.spec.ts:18  playwright/no-wait-for-selector
+      await page.waitForSelector('article[aria-label="Assistant message"]');
+  tests/ratchet-demo/05-web-first.spec.ts:19  playwright/no-element-handle
+      const body = await page.$('article[aria-label="Assistant message"] .bubble__body');
+  tests/ratchet-demo/06-conditional.spec.ts:13  playwright/no-networkidle
+      await page.goto('/chat', { waitUntil: 'networkidle' });
+  tests/ratchet-demo/06-conditional.spec.ts:16  playwright/no-conditional-in-test
+      if (await banner.isVisible()) {
+  tests/ratchet-demo/helpers/selectors.ts:7  no-restricted-syntax
+      return page.locator(selector);
+
+APP-SIDE (13 uses of 9 selectors) — the element has no accessible name. One ticket per selector.
+    5×  #chat-composer-input
+         tests/ratchet-demo/01-hard-wait.spec.ts:15
+         tests/ratchet-demo/02-force-click.spec.ts:14
+         tests/ratchet-demo/03-nth-first.spec.ts:14
+         … +2 more
+    1×  article[aria-label="Assistant message"] .bubble__body
+         tests/ratchet-demo/01-hard-wait.spec.ts:20
+    1×  button.composer__send
+         tests/ratchet-demo/03-nth-first.spec.ts:15
+    1×  form.composer textarea#chat-composer-input
+         tests/ratchet-demo/04-raw-locator.spec.ts:14
+    1×  form.composer > div > div > button.composer__send
+         tests/ratchet-demo/04-raw-locator.spec.ts:15
+    1×  .chat-page__thread-name-trigger h1
+         tests/ratchet-demo/04-raw-locator.spec.ts:17
+    1×  article.bubble[aria-label="User message"] .bubble__body
+         tests/ratchet-demo/04-raw-locator.spec.ts:18
+    1×  #demo-announce
+         tests/ratchet-demo/06-conditional.spec.ts:15
+    1×  button
+         tests/ratchet-demo/06-conditional.spec.ts:17
+
+Fix the app (add a role/label), delete the raw locator, run `ratchet tighten`. Each ticket closed moves the number down.

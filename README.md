@@ -70,3 +70,36 @@ Copilot take the same script; only the payload parsing differs.
 
 Space plays/pauses both videos on a comparison slide (advances slides elsewhere);
 `r` restarts the pair; arrows navigate. Videos autoplay on slide entry.
+
+## Rolling out without boiling the ocean: the ratchet
+
+Turn every rule on today; fix nothing today. ESLint ≥ 9.24 bulk suppressions do the work:
+
+```bash
+npm run ratchet:init      # eslint --suppress-all → eslint-suppressions.json; commit it
+npm run ratchet:report    # splits the frozen violations into test-side vs app-side
+npm run ratchet:tighten   # eslint --prune-suppressions; fails on anything new — run in CI
+```
+
+Every rule still runs on every file; ESLint only stays quiet about the *counts* in
+the file. A new violation (the agent's next shortcut) isn't in it and fails. A fixed
+one leaves a stale entry that `tighten` prunes. The number only goes down.
+
+`tests/ratchet-demo/` is a frozen copy of the baseline specs with the linted rules
+applied — 39 violations in `eslint-suppressions.json` — so you can watch it work.
+
+### 80% of the time the app has to change
+
+`no-raw-locators` firing on `page.locator('#chat-composer-input')` is not a test
+problem. It means the element has no role, no label, no accessible name — a
+screen reader can't find it either. The fix is in the app, which means the
+suppressions file is a shared backlog, not a QA to-do list.
+
+`ratchet:report` splits it accordingly:
+
+- **TEST-SIDE** — `waitForTimeout`, `force`, `.first()`, conditionals. Hand to the agent with the hook on.
+- **APP-SIDE** — grouped by selector, one ticket each. `#chat-composer-input` used 5 times is one ticket:
+  add `<label for="chat-composer-input">Message</label>`, switch to `getByRole('textbox', { name: 'Message' })`,
+  run `ratchet:tighten`, number drops by 5.
+
+The dev team never has to agree to "turn on lint". It's already on; they just watch a number go down.

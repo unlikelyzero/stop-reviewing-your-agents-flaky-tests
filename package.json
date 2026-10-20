@@ -15,7 +15,10 @@
     "test:showcase": "SHOWCASE=1 playwright test --workers=1 --repeat-each=1",
     "flake-lab": "node flake-lab/run.mjs",
     "deck": "node flake-lab/build-deck-data.mjs && npx --yes serve deck -l 8000",
-    "prepare:what-iff": "bash scripts/what-iff-up.sh"
+    "prepare:what-iff": "bash scripts/what-iff-up.sh",
+    "ratchet:init": "node scripts/ratchet.mjs init",
+    "ratchet:report": "node scripts/ratchet.mjs report",
+    "ratchet:tighten": "node scripts/ratchet.mjs tighten"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
