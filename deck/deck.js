@@ -101,6 +101,9 @@ function buildSegments(data) {
     const alt = document.getElementById(`alt-${seg.id}`);
     if (alt) node.querySelector('.video-slide').replaceWith(alt.content.cloneNode(true));
     built.push(node);
+    // Optional interstitial after a rule (Q&A pause, section break): <template id="after-<seg.id>">.
+    const after = document.getElementById(`after-${seg.id}`);
+    if (after) built.push(after.content.cloneNode(true));
   });
   mount.replaceWith(...built);
   document.querySelectorAll('#repeats-inline, #repeats-total').forEach(el => (el.textContent = data.repeats || 'N'));

@@ -32,6 +32,19 @@
       <p class="byline">in collaboration with <strong>ThinkSys</strong></p>
     </section>
 
+    <!-- ============================================================ AGENDA -->
+    <section>
+      <p class="kicker">In the next 40 minutes</p>
+      <h2>What you'll leave with</h2>
+      <ol class="agenda">
+        <li><b>The problem</b><span>why agent-written Playwright tests flake, and why review doesn't catch it</span></li>
+        <li><b>The mechanism</b><span>an ESLint hook that lands the fix instruction at the moment of the mistake</span></li>
+        <li><b>The evidence</b><span>7 rules, same prompt twice, same injected flake — side by side</span></li>
+        <li><b>Rolling it out</b><span>turn every rule on today without fixing anything today</span></li>
+      </ol>
+      <p class="small muted">We'll pause for questions after rule 2 and at the end — drop them in the Q&amp;A panel as they come.</p>
+    </section>
+
     <!-- ============================================================ THE PROBLEM -->
     <section>
       <h2>Agents write tests faster than you can review them</h2>
@@ -127,6 +140,13 @@ streamText   reply body arrives in chunks
     <!-- ============================================================ SEGMENTS (generated) -->
     <div id="segments"></div>
 
+    <!-- ============================================================ RESULTS -->
+    <section>
+      <p class="kicker">The evidence, in numbers</p>
+      <h2>Results: <span id="repeats-total">N</span> runs per spec, same flake</h2>
+      <div id="results-grid" class="results-grid"></div>
+    </section>
+
     <!-- ============================================================ RATCHET -->
     <section>
       <section data-background-color="#072A42">
@@ -214,12 +234,6 @@ APP-SIDE (13 uses of 9 selectors) — element has no accessible name. One ticket
       </section>
     </section>
 
-    <!-- ============================================================ RESULTS -->
-    <section>
-      <h2>Results: <span id="repeats-total">N</span> runs per spec, same flake</h2>
-      <div id="results-grid" class="results-grid"></div>
-    </section>
-
     <!-- ============================================================ TAKEAWAYS -->
     <section data-background-color="#072A42">
       <p class="kicker">Takeaways</p>
@@ -291,6 +305,35 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
   </section>
 </template>
 
+
+
+<!-- Inserted after rule 2 by deck.js: <template id="after-<seg.id>"> -->
+<template id="after-02-force-click">
+  <section data-background-color="#072A42" class="pause">
+    <p class="kicker">Pause · questions so far?</p>
+    <h2>Two rules down, five to go</h2>
+    <div class="two-col">
+      <div>
+        <h3>So far</h3>
+        <ul>
+          <li>Prompts suggest; lint decides</li>
+          <li>The hook lands the fix instruction on the agent's own edit</li>
+          <li><code>no-wait-for-timeout</code> · <code>no-force-option</code></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Next</h3>
+        <ul>
+          <li>Locators: <code>.first()</code>, raw CSS, the laundering loophole</li>
+          <li>Assertions and conditionals</li>
+          <li>Rolling it out without boiling the ocean</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small muted">Moderator: over to you.</p>
+    <aside class="notes">Hand to the moderator. Take 2–3 questions, 3 minutes max. If none: "the one I always get is 'does this slow the agent down?' — the lint runs in under a second on the file it just touched."</aside>
+  </section>
+</template>
 
 <!-- Rule 2 shows the actionability lifecycle instead of a video pair (swapped in by deck.js). -->
 <template id="alt-02-force-click">
