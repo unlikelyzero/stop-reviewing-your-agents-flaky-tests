@@ -80,7 +80,7 @@
 .reveal section[data-background-color="#0f1117"] { }
 .reveal .two-col h3 { color: var(--ts-sky); }
 .reveal .footer-brand { position: fixed; left: 28px; bottom: 22px; display: flex; align-items: center; gap: 12px; opacity: 0.85; z-index: 5; }
-.reveal .footer-brand .logo { height: 28px; }
+.reveal .footer-brand .logo { height: 28px; background: #fff; padding: 5px 10px; border-radius: 8px; box-sizing: content-box; }
 .reveal .footer-brand .logo.pw { height: 32px; }
 .reveal .footer-brand .x { color: var(--muted); font-size: 18px; }
 
