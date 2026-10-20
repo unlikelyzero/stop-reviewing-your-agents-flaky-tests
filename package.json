@@ -1,0 +1,29 @@
+{
+  "name": "agent-flake-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Demo repo for 'Stop Reviewing Your Agent's Flaky Playwright Tests' — same prompt, with and without eslint-plugin-playwright, against what-iff.",
+  "scripts": {
+    "lint": "eslint tests --max-warnings=0",
+    "lint:baseline": "eslint tests/baseline --max-warnings=0",
+    "lint:linted": "eslint tests/linted --max-warnings=0",
+    "lint:agent": "eslint --format ./eslint-rules/agent-formatter.mjs",
+    "test": "playwright test",
+    "test:baseline": "playwright test --project=baseline",
+    "test:linted": "playwright test --project=linted",
+    "test:showcase": "SHOWCASE=1 playwright test --workers=1 --repeat-each=1",
+    "flake-lab": "node flake-lab/run.mjs",
+    "deck": "node flake-lab/build-deck-data.mjs && npx --yes serve deck -l 8000",
+    "prepare:what-iff": "bash scripts/what-iff-up.sh"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.30.0",
+    "eslint-plugin-playwright": "^2.11.0",
+    "reveal.js": "^5.1.0",
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.35.0"
+  }
+}

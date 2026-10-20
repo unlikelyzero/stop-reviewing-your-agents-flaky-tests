@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stop Reviewing Your Agent's Flaky Playwright Tests</title>
+  <link rel="stylesheet" href="vendor/reveal/reveal.css" />
+  <link rel="stylesheet" href="vendor/reveal/theme/black.css" id="theme" />
+  <link rel="stylesheet" href="vendor/reveal-plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="deck.css" />
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- ============================================================ TITLE -->
+    <section data-background-color="#0f1117">
+      <h1 class="title">Stop Reviewing Your Agent's<br/>Flaky Playwright Tests</h1>
+      <p class="subtitle">Turn ESLint into the always-on reviewer your agents can't ignore</p>
+      <p class="byline">John Hill · <code>@unlikelyzero</code> · maintainer, <code>eslint-plugin-playwright</code></p>
+    </section>
+
+    <!-- ============================================================ THE PROBLEM -->
+    <section>
+      <h2>Agents write tests faster than you can review them</h2>
+      <p class="lead">Ask any agent to make a failing test pass. It reaches for whatever works <em>right now</em>:</p>
+      <pre><code class="language-ts" data-trim data-line-numbers>
+await page.waitForTimeout(2000);
+await page.locator('form.composer > div > div > button').click();
+await page.locator('button.send').first().click();
+await button.click({ force: true });
+if (await banner.isVisible()) await banner.click();
+      </code></pre>
+      <p class="fragment">Green today. Three weeks later it's the flake blocking someone else's PR.</p>
+    </section>
+
+    <section>
+      <h2>Prompts are suggestions. Lint is a verdict.</h2>
+      <div class="two-col">
+        <div>
+          <h3>CLAUDE.md / .cursorrules</h3>
+          <ul>
+            <li>Diluted as context grows</li>
+            <li>Agents route around them</li>
+            <li>Different answer every run</li>
+          </ul>
+        </div>
+        <div>
+          <h3>ESLint rule</h3>
+          <ul>
+            <li>~1 second</li>
+            <li>Same verdict every time</li>
+            <li>Error lands <em>at the moment of the mistake</em></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ DEMO SETUP -->
+    <section>
+      <h2>The experiment</h2>
+      <ul>
+        <li>App: <a href="https://github.com/theimaginaryfoundation/what-iff">what-iff</a> — Angular + Go, mock-LLM mode</li>
+        <li>Same prompt, twice: <span class="tag tag-base">baseline</span> no Playwright lint rules · <span class="tag tag-lint">linted</span> rules + hook</li>
+        <li>Then: inject the conditions that make tests flake, run each <span id="repeats-inline">N</span>×</li>
+      </ul>
+      <pre><code class="language-ts" data-trim>
+// tests/support/flake.ts — injected from the test side, app untouched
+slowApi      API replies 300–2500 ms late
+overlay      banner mounts late, covers the composer
+duplicates   decoy "send" control appears
+renameCss    BEM classes rewritten, ids renamed
+streamText   reply body arrives in chunks
+      </code></pre>
+    </section>
+
+    <!-- ============================================================ SEGMENTS (generated) -->
+    <div id="segments"></div>
+
+    <!-- ============================================================ WIRING -->
+    <section>
+      <h2>Wire it in before a browser ever launches</h2>
+      <pre><code class="language-json" data-trim>
+// .claude/settings.json
+{ "hooks": { "PostToolUse": [{
+    "matcher": "Edit|Write|MultiEdit",
+    "hooks": [{ "type": "command",
+                "command": "bash $CLAUDE_PROJECT_DIR/scripts/lint-hook.sh" }]
+}]}}
+      </code></pre>
+      <p class="small">Exit 2 + stderr → the fix instruction becomes the result of the agent's own edit.<br/>
+      Cursor: <code>hooks.json → afterFileEdit</code> · Copilot: pre-commit · Playwright MCP: same script in the tool wrapper.</p>
+    </section>
+
+    <section>
+      <h2>Rewrite messages as fix instructions</h2>
+      <div class="two-col">
+        <div>
+          <h3 class="muted">Stock</h3>
+          <blockquote>Unexpected use of page.waitForTimeout().</blockquote>
+        </div>
+        <div>
+          <h3>Rewritten</h3>
+          <blockquote>Remove page.waitForTimeout(). Replace it with the assertion you were waiting for: <code>await expect(locator).toBeVisible()</code>…<br/>If nothing observable changes, there is nothing to wait for.</blockquote>
+        </div>
+      </div>
+      <p class="small">Same rule. One repairs on the first try.</p>
+    </section>
+
+    <!-- ============================================================ RESULTS -->
+    <section>
+      <h2>Results: <span id="repeats-total">N</span> runs per spec, same flake</h2>
+      <div id="results-grid" class="results-grid"></div>
+    </section>
+
+    <section data-background-color="#0f1117">
+      <h2>Drop it in today</h2>
+      <pre><code class="language-bash" data-trim>
+npm i -D eslint eslint-plugin-playwright typescript-eslint
+# copy eslint.config.mjs, eslint-rules/, scripts/lint-hook.sh, .claude/settings.json
+      </code></pre>
+      <p class="byline">github.com/unlikelyzero/agent-flake-demo · <code>@unlikelyzero</code></p>
+    </section>
+
+  </div>
+</div>
+
+<!-- Segment template: one rule = three slides (prompt+shortcut, side-by-side video, verdict) -->
+<template id="segment-tpl">
+  <section>
+    <section data-auto-animate>
+      <p class="kicker">Rule <span class="seg-n"></span> / 7</p>
+      <h2><code class="rule-name"></code></h2>
+      <p class="lead">Prompt: <em class="prompt"></em></p>
+      <p>Agent's shortcut: <code class="shortcut"></code></p>
+      <p class="small muted">Flake seam: <code class="flake"></code></p>
+    </section>
+
+    <section class="video-slide">
+      <div class="compare">
+        <figure class="side side-base">
+          <figcaption><span class="tag tag-base">baseline</span> <span class="rate rate-base"></span></figcaption>
+          <video class="vid vid-base" muted playsinline preload="metadata"></video>
+          <div class="placeholder ph-base">no recording yet · run <code>&nbsp;npm run test:showcase</code></div>
+        </figure>
+        <figure class="side side-lint">
+          <figcaption><span class="tag tag-lint">linted</span> <span class="rate rate-lint"></span></figcaption>
+          <video class="vid vid-lint" muted playsinline preload="metadata"></video>
+          <div class="placeholder ph-lint">no recording yet</div>
+        </figure>
+      </div>
+      <p class="small controls-hint">space: play/pause both · r: restart · ← → : slides</p>
+    </section>
+
+    <section>
+      <h3>What the agent saw</h3>
+      <pre class="lint-out"><code class="language-text" data-trim></code></pre>
+    </section>
+  </section>
+</template>
+
+<script src="vendor/reveal/reveal.js"></script>
+<script src="vendor/reveal-plugin/highlight/highlight.js"></script>
+<script src="vendor/reveal-plugin/notes/notes.js"></script>
+<script src="deck.js"></script>
+</body>
+</html>

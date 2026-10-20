@@ -1,0 +1,5 @@
+node_modules/
+test-results/
+flake-lab/out/
+deck/videos/*.webm
+deck/data.json
