@@ -14,8 +14,18 @@ if [ ! -d "$WHATIFF_DIR" ]; then
 fi
 
 cd "$WHATIFF_DIR"
-[ -f .env ] || cp .env.example .env
+if [ ! -f .env ]; then
+  cp .env.example .env
+  # The API refuses to boot without these; .env.example ships them commented out.
+  {
+    echo "JWT_SECRET=$(openssl rand -hex 32)"
+    echo "JWT_REFRESH_SECRET=$(openssl rand -hex 32)"
+    echo "TOKEN_ENCRYPTION_SECRET=$(openssl rand -hex 32)"
+    echo "AUTO_MIGRATE=true"
+  } >> .env
+fi
 make db-up
+[ -d ent/user ] || make generate   # Ent code is not committed upstream
 LLM_BACKEND=mock make dev-up
 
 cd web/app

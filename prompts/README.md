@@ -7,7 +7,7 @@ slide.
 
 Target app: what-iff running locally (`npm run prepare:what-iff`). Tell the agent
 the app is at http://localhost:4200, the API at http://localhost:8080/api, and
-that `tests/support/account.ts` gives it a fresh signed-in user.
+that `tests/support/account.ts` gives it a fresh signed-in user with one chat (`freshSession()` returns the `chatId`; open `/chat/<chatId>`).
 
 | # | Rule | Prompt |
 |---|------|--------|

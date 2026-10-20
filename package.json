@@ -1,9 +1,9 @@
 {
-  "name": "agent-flake-demo",
+  "name": "stop-reviewing-your-agents-flaky-tests",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Demo repo for 'Stop Reviewing Your Agent's Flaky Playwright Tests' — same prompt, with and without eslint-plugin-playwright, against what-iff.",
+  "description": "Companion repo for the talk Stop Reviewing Your Agent's Flaky Playwright Tests: the same prompt with and without eslint-plugin-playwright, run against what-iff under injected flake.",
   "scripts": {
     "lint": "eslint tests --max-warnings=0",
     "lint:baseline": "eslint tests/baseline --max-warnings=0",
@@ -15,6 +15,7 @@
     "test:showcase": "SHOWCASE=1 playwright test --workers=1 --repeat-each=1",
     "flake-lab": "node flake-lab/run.mjs",
     "deck": "node flake-lab/build-deck-data.mjs && npx --yes serve deck -l 8000",
+    "deck:pdf": "node scripts/export-pdf.mjs stop-reviewing-your-agents-flaky-tests.pdf",
     "prepare:what-iff": "bash scripts/what-iff-up.sh",
     "ratchet:init": "node scripts/ratchet.mjs init",
     "ratchet:report": "node scripts/ratchet.mjs report",

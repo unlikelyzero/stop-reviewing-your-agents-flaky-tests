@@ -6,7 +6,7 @@
 # the result of its edit, so the fix instruction lands at the moment the mistake was made.
 #
 # Same script works for Cursor (hooks.json → afterFileEdit) and as a Copilot/pre-commit step;
-# only the payload parsing differs. See docs/wiring.md.
+# only the payload parsing differs. See README.md, "The hook".
 set -euo pipefail
 
 payload="$(cat)"
