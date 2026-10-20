@@ -12,9 +12,9 @@ test.use({ flake: ['renameCss', 'slowApi'] });
 
 test.describe('loophole: locator laundering', () => {
   test('message is sent (via page object)', async ({ page, request }) => {
-    await freshSession(page, request);
+    const { chatId } = await freshSession(page, request);
     const chat = new ChatPage(page);
-    await chat.goto();
+    await chat.goto(chatId);
 
     await chat.send('Laundered selector');
 

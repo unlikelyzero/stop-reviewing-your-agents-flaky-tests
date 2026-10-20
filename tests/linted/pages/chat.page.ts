@@ -14,7 +14,7 @@ export class ChatPage {
     this.assistantMessage = page.getByRole('article', { name: 'Assistant message' });
   }
 
-  async goto(): Promise<void> {
+  async goto(chatId: string): Promise<void> {
     await this.page.goto(`/chat/${chatId}`);
   }
 
