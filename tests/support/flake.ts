@@ -106,7 +106,7 @@ export async function installFlakes(page: Page, flakes: Set<FlakeName>, seed: nu
           decoy.style.cssText = 'position:fixed;top:12px;right:12px;z-index:9999';
           document.body.prepend(decoy);
         };
-        new MutationObserver(add).observe(document.documentElement, { childList: true, subtree: true });
+        new MutationObserver(add).observe(document, { childList: true, subtree: true });
       })();`);
   }
 
@@ -122,25 +122,28 @@ export async function installFlakes(page: Page, flakes: Set<FlakeName>, seed: nu
           }
         };
         const walk = (root) => { rewrite(root); root.querySelectorAll?.('*').forEach(rewrite); };
-        new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(walk))).observe(document.documentElement, { childList: true, subtree: true });
+        new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(walk))).observe(document, { childList: true, subtree: true });
       })();`);
   }
 
   if (flakes.has('streamText')) {
     // Chunk the assistant bubble body so textContent() is non-empty but incomplete
     // for a while — the classic expect(await locator.textContent()).toContain() flake.
+    // Waits for Angular to finish writing the body (debounce, no pending dots) before
+    // taking it over, so the restored text is the real final reply.
     initScripts.push(`
       (() => {
-        const seen = new WeakSet();
+        const seen = new WeakSet(); const timers = new WeakMap();
         const chunk = (body) => {
-          if (seen.has(body)) return; seen.add(body);
-          const full = body.innerHTML; if (!full || full.length < 8) { seen.delete(body); return; }
-          const text = body.textContent; body.textContent = '';
+          if (seen.has(body) || body.querySelector('.bubble__pending-dots, .bubble__pending-status, .wi-bubble-pending-dots')) return;
+          const full = body.innerHTML; const text = body.textContent; if (!text || text.trim().length < 8) return;
+          seen.add(body); body.textContent = '';
           let i = 0; const step = Math.max(1, Math.floor(text.length / 12));
           const t = setInterval(() => { i += step; body.textContent = text.slice(0, i); if (i >= text.length) { clearInterval(t); body.innerHTML = full; } }, ${jitter(120, 260)});
         };
-        new MutationObserver(() => document.querySelectorAll('article[aria-label="Assistant message"] .bubble__body, article[aria-label="Assistant message"] .wi-bubble-body').forEach(chunk))
-          .observe(document.documentElement, { childList: true, subtree: true });
+        const schedule = (body) => { clearTimeout(timers.get(body)); timers.set(body, setTimeout(() => chunk(body), 300)); };
+        new MutationObserver(() => document.querySelectorAll('article[aria-label="Assistant message"] .bubble__body, article[aria-label="Assistant message"] .wi-bubble-body').forEach(schedule))
+          .observe(document, { childList: true, subtree: true, characterData: true });
       })();`);
   }
 

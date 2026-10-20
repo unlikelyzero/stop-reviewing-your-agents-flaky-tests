@@ -18,6 +18,6 @@ test.describe('send a message and get a reply', () => {
     await page.waitForTimeout(2000); // wait for the assistant to respond
 
     const reply = await page.locator('article[aria-label="Assistant message"] .bubble__body').last().textContent();
-    expect(reply?.length).toBeGreaterThan(0);
+    expect(reply).toContain('Hello from the demo'); // mock LLM echoes the prompt
   });
 });

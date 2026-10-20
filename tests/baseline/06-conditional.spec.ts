@@ -10,7 +10,7 @@ test.use({ flake: ['overlay', 'slowApi'] });
 test.describe('banner can be dismissed', () => {
   test('announcement is dismissed before chatting', async ({ page, request }) => {
     const { chatId } = await freshSession(page, request);
-    await page.goto(`/chat/${chatId}`, { waitUntil: 'networkidle' });
+    await page.goto(`/chat/${chatId}`);
 
     const banner = page.locator('#demo-announce');
     if (await banner.isVisible()) {
