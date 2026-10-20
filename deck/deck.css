@@ -182,11 +182,11 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 .dom-label { position: absolute; left: 0; right: 0; top: 14px; color: var(--muted); font-weight: 600; }
 .stage:has(.mock-banner.visible) .dom-label { display: none; }
-.stage:has(.st6.visible) .mock-banner { transform: translateY(100%); }
-.stage:has(.st6.visible) .stage-label { display: none; }
-.stage:has(.st6.visible) .dom-label { display: block; color: #aab; }
-.stage:has(.st6.visible) .dom-label::after { content: ' — banner dismissed; the button is busy, still not clickable'; }
+
+/* Enabled (step 4): busy button. Receives events (step 5): banner arrives, button is ready again underneath. */
 .stage:has(.st6.visible) .dom-label { font-size: 0; }
-.stage:has(.st6.visible) .dom-label::after { content: 'banner dismissed — the button is now busy: attached, visible, stable, and still not clickable'; font-size: 16px; }
-.stage:has(.st6.visible) .crosshair { border-color: var(--muted); }
-.stage:has(.st6.visible) .crosshair::before, .stage:has(.st6.visible) .crosshair::after { background: var(--muted); }
+.stage:has(.st6.visible) .dom-label::after { content: 'attached, visible, stable — and busy: the Enabled check waits'; font-size: 16px; color: #aab; }
+.stage:has(.mock-banner.visible) .mock-send { background: #6D5AE6; color: #fff; cursor: default; }
+.stage:has(.mock-banner.visible) .mock-send .spinner { display: none; }
+.stage:has(.mock-banner.visible) .mock-send .label { font-size: inherit; }
+.stage:has(.mock-banner.visible) .mock-send .label::before, .stage:has(.mock-banner.visible) .mock-send .label::after { content: none; }
