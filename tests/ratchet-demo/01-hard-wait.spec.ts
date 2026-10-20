@@ -8,8 +8,8 @@ test.use({ flake: ['slowApi'] });
 
 test.describe('send a message and get a reply', () => {
   test('assistant replies to a message', async ({ page, request }) => {
-    await freshSession(page, request);
-    await page.goto('/chat');
+    const { chatId } = await freshSession(page, request);
+    await page.goto(`/chat/${chatId}`);
     await page.waitForTimeout(1500); // wait for the chat page to load
 
     await page.locator('#chat-composer-input').fill('Hello from the demo');

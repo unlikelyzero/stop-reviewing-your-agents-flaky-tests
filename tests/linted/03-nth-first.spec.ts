@@ -8,8 +8,8 @@ test.use({ flake: ['duplicates', 'slowApi'] });
 
 test.describe('send button is unambiguous', () => {
   test('clicking send posts the message', async ({ page, request }) => {
-    await freshSession(page, request);
-    await page.goto('/chat');
+    const { chatId } = await freshSession(page, request);
+    await page.goto(`/chat/${chatId}`);
 
     await page.getByRole('textbox', { name: 'Message' }).fill('Which button did I press?');
     await page.getByRole('button', { name: 'Send message' }).click();

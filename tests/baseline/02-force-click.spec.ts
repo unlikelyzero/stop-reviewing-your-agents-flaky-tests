@@ -8,8 +8,8 @@ test.use({ flake: ['overlay', 'slowApi'] });
 
 test.describe('send a message with an announcement banner open', () => {
   test('message is sent even when a banner is showing', async ({ page, request }) => {
-    await freshSession(page, request);
-    await page.goto('/chat');
+    const { chatId } = await freshSession(page, request);
+    await page.goto(`/chat/${chatId}`);
 
     await page.locator('#chat-composer-input').fill('Can you hear me through the banner?');
     await page.getByRole('button', { name: 'Send message' }).click({ force: true });

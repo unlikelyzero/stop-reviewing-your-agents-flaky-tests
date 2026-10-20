@@ -9,8 +9,8 @@ test.use({ flake: ['overlay', 'slowApi'] });
 
 test.describe('send a message with an announcement banner open', () => {
   test('message is sent even when a banner is showing', async ({ page, request }) => {
-    await freshSession(page, request);
-    await page.goto('/chat');
+    const { chatId } = await freshSession(page, request);
+    await page.goto(`/chat/${chatId}`);
 
     const banner = page.getByRole('dialog', { name: 'Announcement' });
     await banner.getByRole('button', { name: 'Dismiss announcement' }).click();

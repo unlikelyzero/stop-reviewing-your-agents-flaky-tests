@@ -10,8 +10,8 @@ test.use({ flake: ['renameCss', 'slowApi'] });
 
 test.describe('loophole: locator laundering', () => {
   test('message is sent (via helper)', async ({ page, request }) => {
-    await freshSession(page, request);
-    await page.goto('/chat');
+    const { chatId } = await freshSession(page, request);
+    await page.goto(`/chat/${chatId}`);
 
     await css(page, '#chat-composer-input').fill('Laundered selector');
     await css(page, 'button.composer__send').click();

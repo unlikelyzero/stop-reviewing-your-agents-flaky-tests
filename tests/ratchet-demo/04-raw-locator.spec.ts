@@ -8,8 +8,8 @@ test.use({ flake: ['renameCss', 'slowApi'] });
 
 test.describe('chat header shows the thread', () => {
   test('header is present after the first message', async ({ page, request }) => {
-    await freshSession(page, request);
-    await page.goto('/chat');
+    const { chatId } = await freshSession(page, request);
+    await page.goto(`/chat/${chatId}`);
 
     await page.locator('form.composer textarea#chat-composer-input').fill('Name this thread');
     await page.locator('form.composer > div > div > button.composer__send').click();

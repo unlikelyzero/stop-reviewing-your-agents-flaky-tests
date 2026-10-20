@@ -8,8 +8,8 @@ test.use({ flake: ['slowApi'] });
 
 test.describe('send a message and get a reply', () => {
   test('assistant replies to a message', async ({ page, request }) => {
-    await freshSession(page, request);
-    await page.goto('/chat');
+    const { chatId } = await freshSession(page, request);
+    await page.goto(`/chat/${chatId}`);
 
     const composer = page.getByRole('textbox', { name: 'Message' });
     await composer.fill('Hello from the demo');

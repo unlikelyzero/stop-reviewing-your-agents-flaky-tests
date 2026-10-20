@@ -8,8 +8,8 @@ test.use({ flake: ['streamText', 'slowApi'] });
 
 test.describe('assistant echoes the message', () => {
   test('reply body contains the sent text', async ({ page, request }) => {
-    await freshSession(page, request);
-    await page.goto('/chat');
+    const { chatId } = await freshSession(page, request);
+    await page.goto(`/chat/${chatId}`);
 
     await page.getByRole('textbox', { name: 'Message' }).fill('echo-me-7f3a');
     await page.getByRole('button', { name: 'Send message' }).click();

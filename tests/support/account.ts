@@ -34,10 +34,27 @@ export async function signIn(page: Page, user: DemoUser): Promise<void> {
   await expect(page).not.toHaveURL(/\/auth\/login/, { timeout: 15_000 });
 }
 
-/** Register + sign in; returns the user so a spec can name things after it. */
-export async function freshSession(page: Page, request: APIRequestContext): Promise<DemoUser> {
+/** A fresh account lands on onboarding; the chat composer only exists once a personality does. */
+export async function createChat(request: APIRequestContext, token: string): Promise<string> {
+  const headers = { authorization: `Bearer ${token}` };
+  const p = await request.post(`${API_URL}/personality`, {
+    headers,
+    data: { name: 'Demo', system_prompt: 'You are a terse assistant used for a lint demo.' },
+  });
+  expect(p.status(), `create personality: ${await p.text()}`).toBe(201);
+  const c = await request.post(`${API_URL}/chat`, {
+    headers,
+    data: { name: 'Demo chat', personality_id: ((await p.json()) as { id: string }).id },
+  });
+  expect(c.status(), `create chat: ${await c.text()}`).toBe(201);
+  return ((await c.json()) as { id: string }).id;
+}
+
+/** Register + seed a personality and a chat + sign in; returns the user so a spec can name things after it. */
+export async function freshSession(page: Page, request: APIRequestContext): Promise<DemoUser & { chatId: string }> {
   const user = newUser();
-  await register(request, user);
+  const token = await register(request, user);
+  const chatId = await createChat(request, token);
   await signIn(page, user);
-  return user;
+  return { ...user, chatId };
 }

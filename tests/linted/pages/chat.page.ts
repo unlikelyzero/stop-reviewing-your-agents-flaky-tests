@@ -15,7 +15,7 @@ export class ChatPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/chat');
+    await this.page.goto(`/chat/${chatId}`);
   }
 
   async send(text: string): Promise<void> {

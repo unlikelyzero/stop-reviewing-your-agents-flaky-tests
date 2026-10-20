@@ -9,8 +9,8 @@ test.use({ flake: ['overlay', 'slowApi'] });
 
 test.describe('banner can be dismissed', () => {
   test('announcement is dismissed before chatting', async ({ page, request }) => {
-    await freshSession(page, request);
-    await page.goto('/chat');
+    const { chatId } = await freshSession(page, request);
+    await page.goto(`/chat/${chatId}`);
 
     const banner = page.getByRole('dialog', { name: 'Announcement' });
     await expect(banner).toBeVisible();
