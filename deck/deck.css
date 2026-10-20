@@ -62,3 +62,21 @@
 .results-grid .pct { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; font-weight: 700; }
 .results-grid .pct .b { color: var(--base); } .results-grid .pct .l { color: var(--lint); }
 .reveal .byline .avatar { width: 2.2em; height: 2.2em; border-radius: 50%; vertical-align: middle; margin-right: 0.4em; }
+
+/* ---- ThinkSys theme ---- */
+:root {
+  --ts-navy: #0A3E5F; --ts-navy-deep: #072A42; --ts-sky: #2BAAE1; --ts-magenta: #97067F; --ts-orange: #F0A23B;
+  --r-background-color: var(--ts-navy); --r-main-color: #fff; --r-heading-color: var(--ts-sky);
+  --r-link-color: var(--ts-sky); --r-link-color-hover: #5EC6F3; --r-selection-background-color: var(--ts-magenta);
+  --muted: #9fc3d8;
+}
+.reveal { font-family: Poppins, ui-sans-serif, system-ui, sans-serif; }
+.reveal h1, .reveal h2, .reveal h3 { font-family: Oswald, Poppins, sans-serif; text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; }
+.reveal h1.title { color: #fff; }
+.reveal h2 em, .reveal h1 em { color: var(--ts-magenta); font-style: normal; }
+.reveal .kicker { color: var(--ts-orange); }
+.reveal blockquote { border-left-color: var(--ts-sky); }
+.reveal pre code { background: var(--ts-navy-deep); }
+.reveal section[data-background-color="#0f1117"] { }
+.reveal .two-col h3 { color: var(--ts-sky); }
+.reveal .logo { position: fixed; left: 28px; bottom: 22px; height: 28px; opacity: 0.85; }

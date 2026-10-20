@@ -7,17 +7,20 @@
   <link rel="stylesheet" href="vendor/reveal/reveal.css" />
   <link rel="stylesheet" href="vendor/reveal/theme/black.css" id="theme" />
   <link rel="stylesheet" href="vendor/reveal-plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Poppins:wght@400;600;700&display=swap" />
   <link rel="stylesheet" href="deck.css" />
 </head>
 <body>
 <div class="reveal">
+  <img class="logo" src="thinksys-logo.svg" alt="ThinkSys" />
   <div class="slides">
 
     <!-- ============================================================ TITLE -->
-    <section data-background-color="#0f1117">
+    <section data-background-color="#072A42">
       <h1 class="title">Stop Reviewing Your Agent's<br/>Flaky Playwright Tests</h1>
       <p class="subtitle">Turn ESLint into the always-on reviewer your agents can't ignore</p>
       <p class="byline"><img class="avatar" src="john-hill.jpg" alt="John Hill" /> John Hill · <code>@unlikelyzero</code> · maintainer, <code>eslint-plugin-playwright</code></p>
+      <p class="byline">in collaboration with <strong>ThinkSys</strong></p>
     </section>
 
     <!-- ============================================================ THE PROBLEM -->
@@ -116,7 +119,7 @@ streamText   reply body arrives in chunks
 
     <!-- ============================================================ RATCHET -->
     <section>
-      <section data-background-color="#0f1117">
+      <section data-background-color="#072A42">
         <p class="kicker">Rolling this out</p>
         <h2>You don't have to boil the ocean</h2>
         <p class="lead">Turn every rule on <em>today</em>. Fix nothing today.</p>
@@ -207,7 +210,7 @@ APP-SIDE (13 uses of 9 selectors) — element has no accessible name. One ticket
       <div id="results-grid" class="results-grid"></div>
     </section>
 
-    <section data-background-color="#0f1117">
+    <section data-background-color="#072A42">
       <h2>Drop it in today</h2>
       <pre><code class="language-bash" data-trim>
 npm i -D eslint eslint-plugin-playwright typescript-eslint
