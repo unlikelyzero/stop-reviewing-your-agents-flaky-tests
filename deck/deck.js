@@ -59,6 +59,32 @@ function fmtRate(p) {
   return p?.passRate == null ? '' : `${p.passRate}% pass`;
 }
 
+
+/* What the test actually needed — the lines from tests/linted that replaced the shortcut. */
+const NEEDED = {
+  '01-hard-wait': `const reply = page.getByRole('article', { name: 'Assistant message' });
+await expect(reply).toBeVisible();      // waits for the thing, not the clock
+await expect(reply).not.toBeEmpty();`,
+  '02-force-click': `await page.getByRole('button', { name: 'Dismiss announcement' }).click();
+await page.getByRole('button', { name: 'Send message' }).click();   // no force: every check passes`,
+  '03-nth-first': `await page.getByRole('button', { name: 'Send message' }).click();   // one match, by name
+await expect(page.getByRole('article', { name: 'User message' })
+  .filter({ hasText: 'Which button did I press?' })).toBeVisible();`,
+  '04-raw-locator': `await page.getByRole('textbox', { name: 'Message' }).fill('Name this thread');
+await page.getByRole('button', { name: 'Send message' }).click();
+await expect(page.getByRole('heading', { level: 1 })).toBeVisible();   // survives any rename`,
+  '05-web-first': `await expect(page.getByRole('article', { name: 'Assistant message' }))
+  .toContainText('echo-me-7f3a');   // retries until the stream finishes`,
+  '06-conditional': `const banner = page.getByRole('dialog', { name: 'Announcement' });
+await expect(banner).toBeVisible();                                   // assert the state
+await banner.getByRole('button', { name: 'Dismiss announcement' }).click();
+await expect(banner).toBeHidden();                                    // then act on it`,
+  '07-loophole': `// pages/chat.page.ts — the only file allowed to hold page
+this.sendButton = page.getByRole('button', { name: 'Send message' });
+// spec
+await chat.send('Laundered selector');`,
+};
+
 function buildSegments(data) {
   const tpl = document.getElementById('segment-tpl');
   const mount = document.getElementById('segments');
@@ -73,6 +99,7 @@ function buildSegments(data) {
     node.querySelector('.cause').textContent = seg.cause ?? '';
     node.querySelector('.fix').textContent = seg.fix ?? '';
     node.querySelector('.lint-out code').textContent = LINT_OUT[seg.id] ?? '';
+    node.querySelector('.needed-out code').textContent = NEEDED[seg.id] ?? '';
 
     for (const [proj, cls] of [['baseline', 'base'], ['linted', 'lint']]) {
       const side = node.querySelector(`.side-${cls}`);

@@ -296,7 +296,10 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
         </figure>
       </div>
       <p class="small controls-hint">space: play/pause both · r: restart · ← → : slides</p>
-      <div class="agent-saw"><span class="tag tag-lint">what the agent saw</span><pre class="lint-out"><code class="language-text" data-trim></code></pre></div>
+      <div class="agent-saw">
+        <div><span class="tag tag-base">what the agent saw</span><pre class="lint-out"><code class="language-text" data-trim></code></pre></div>
+        <div><span class="tag tag-lint">what the test needed</span><pre class="lint-out needed-out"><code class="language-ts" data-trim></code></pre></div>
+      </div>
     </section>
   </section>
 </template>

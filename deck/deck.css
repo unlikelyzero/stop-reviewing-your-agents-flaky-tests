@@ -49,7 +49,7 @@
 .rate:empty::after { content: '—'; color: var(--muted); font-weight: 400; }
 .controls-hint { color: var(--muted); margin-top: 0.4em; }
 
-.agent-saw { margin-top: 0.3em; text-align: left; }
+.agent-saw { margin-top: 0.3em; text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6em; align-items: start; }
 .agent-saw .tag { margin-bottom: 0.2em; }
 .reveal .agent-saw pre.lint-out { margin: 0.15em 0 0; font-size: 0.36em; }
 .reveal pre.lint-out code { line-height: 1.4; text-align: left; white-space: pre-wrap; padding: 10px 14px; max-height: none; }
