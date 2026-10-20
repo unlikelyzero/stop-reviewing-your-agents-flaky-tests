@@ -70,6 +70,8 @@ function buildSegments(data) {
     node.querySelector('.prompt').textContent = PROMPTS[seg.id] ?? '';
     node.querySelector('.shortcut').textContent = seg.shortcut;
     node.querySelector('.flake').textContent = seg.flake;
+    node.querySelector('.cause').textContent = seg.cause ?? '';
+    node.querySelector('.fix').textContent = seg.fix ?? '';
     node.querySelector('.lint-out code').textContent = LINT_OUT[seg.id] ?? '';
 
     for (const [proj, cls] of [['baseline', 'base'], ['linted', 'lint']]) {

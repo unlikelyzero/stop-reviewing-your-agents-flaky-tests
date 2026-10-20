@@ -61,3 +61,4 @@
 .results-grid .bar-lint > i { background: var(--lint); }
 .results-grid .pct { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; font-weight: 700; }
 .results-grid .pct .b { color: var(--base); } .results-grid .pct .l { color: var(--lint); }
+.reveal .byline .avatar { width: 2.2em; height: 2.2em; border-radius: 50%; vertical-align: middle; margin-right: 0.4em; }

@@ -17,7 +17,7 @@
     <section data-background-color="#0f1117">
       <h1 class="title">Stop Reviewing Your Agent's<br/>Flaky Playwright Tests</h1>
       <p class="subtitle">Turn ESLint into the always-on reviewer your agents can't ignore</p>
-      <p class="byline">John Hill · <code>@unlikelyzero</code> · maintainer, <code>eslint-plugin-playwright</code></p>
+      <p class="byline"><img class="avatar" src="john-hill.jpg" alt="John Hill" /> John Hill · <code>@unlikelyzero</code> · maintainer, <code>eslint-plugin-playwright</code></p>
     </section>
 
     <!-- ============================================================ THE PROBLEM -->
@@ -38,7 +38,7 @@ if (await banner.isVisible()) await banner.click();
       <h2>Prompts are suggestions. Lint is a verdict.</h2>
       <div class="two-col">
         <div>
-          <h3>CLAUDE.md / .cursorrules</h3>
+          <h3>AGENTS.md / .cursorrules</h3>
           <ul>
             <li>Diluted as context grows</li>
             <li>Agents route around them</li>
@@ -54,6 +54,13 @@ if (await banner.isVisible()) await banner.click();
           </ul>
         </div>
       </div>
+      <p class="fragment">Keep both — but make the prompt <em>point at</em> the verdict:</p>
+      <pre class="fragment"><code data-trim class="language-markdown">
+# AGENTS.md
+Run `npm run lint` before you report a test as done. Every error is
+a rule, and every rule has a doc — read it, don't suppress it:
+https://github.com/playwright-community/eslint-plugin-playwright/tree/main/docs/rules
+      </code></pre>
     </section>
 
     <!-- ============================================================ DEMO SETUP -->
@@ -221,6 +228,8 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
       <p class="lead">Prompt: <em class="prompt"></em></p>
       <p>Agent's shortcut: <code class="shortcut"></code></p>
       <p class="small muted">Flake seam: <code class="flake"></code></p>
+      <p class="small fragment">Probably: <span class="cause"></span></p>
+      <p class="small fragment">Instead: <code class="fix"></code></p>
     </section>
 
     <section class="video-slide">
