@@ -49,7 +49,12 @@
 .rate:empty::after { content: '—'; color: var(--muted); font-weight: 400; }
 .controls-hint { color: var(--muted); margin-top: 0.4em; }
 
-.reveal pre.lint-out code { font-size: 1.05em; line-height: 1.45; text-align: left; white-space: pre-wrap; }
+.agent-saw { margin-top: 0.3em; text-align: left; }
+.agent-saw .tag { margin-bottom: 0.2em; }
+.reveal .agent-saw pre.lint-out { margin: 0.15em 0 0; font-size: 0.36em; }
+.reveal pre.lint-out code { line-height: 1.4; text-align: left; white-space: pre-wrap; padding: 10px 14px; max-height: none; }
+.compare { max-width: 1250px; margin: 0 auto; }
+.controls-hint { margin-top: 0.15em; }
 
 /* ---- results grid ---- */
 .results-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.6em; font-size: 0.45em; }
