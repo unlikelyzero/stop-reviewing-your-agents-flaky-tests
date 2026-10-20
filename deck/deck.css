@@ -93,13 +93,28 @@
 .side.failed.ended video { outline-width: 6px; }
 
 /* ---- actionability lifecycle (rule 2) ---- */
-.lifecycle { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5em; margin: 0.6em 0; }
-.lifecycle .step { background: rgba(255,255,255,0.06); border: 2px solid var(--ts-sky); border-radius: 10px; padding: 0.5em 0.6em; font-size: 0.5em; text-align: left; position: relative; }
-.lifecycle .step b { display: block; font-family: Oswald, sans-serif; text-transform: uppercase; font-size: 1.3em; color: var(--ts-sky); }
+.lifecycle-wrap { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.2em; align-items: start; margin: 0.4em 0; }
+.stage { position: relative; height: 300px; background: #0b0d12; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); font-size: 0.5em; }
+.mock-composer { position: absolute; left: 24px; right: 24px; top: 150px; display: flex; gap: 10px; align-items: center; }
+.mock-input { flex: 1; background: #1a1d26; color: #cfd3dc; border: 1px solid #343846; border-radius: 10px; padding: 12px 14px; text-align: left; }
+.mock-send { background: #6D5AE6; color: #fff; border: 0; border-radius: 10px; padding: 12px 18px; font: inherit; font-weight: 600; position: relative; }
+.crosshair { position: absolute; right: 52px; top: 50%; width: 28px; height: 28px; margin-top: -14px; border: 2px solid var(--lint); border-radius: 50%; }
+.crosshair::before, .crosshair::after { content: ''; position: absolute; background: var(--lint); }
+.crosshair::before { left: 50%; top: -8px; bottom: -8px; width: 2px; margin-left: -1px; }
+.crosshair::after { top: 50%; left: -8px; right: -8px; height: 2px; margin-top: -1px; }
+.mock-banner { position: absolute; left: 0; right: 0; bottom: 0; height: 120px; background: #1f2937; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; box-shadow: 0 -4px 24px rgba(0,0,0,.5); transform: translateY(100%); transition: transform 0.5s ease; }
+.mock-banner.visible { transform: translateY(0); }
+.mock-banner button { background: #6D5AE6; color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; font: inherit; }
+.mock-banner.visible ~ .mock-composer .crosshair, .stage:has(.mock-banner.visible) .crosshair { border-color: var(--base); z-index: 2; }
+.stage:has(.mock-banner.visible) .crosshair::before, .stage:has(.mock-banner.visible) .crosshair::after { background: var(--base); }
+.stage-label { position: absolute; left: 0; right: 0; top: 14px; color: var(--base); font-weight: 700; }
+.lifecycle { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35em; }
+.lifecycle .step { background: rgba(255,255,255,0.06); border: 2px solid var(--ts-sky); border-radius: 10px; padding: 0.35em 0.6em; font-size: 0.5em; text-align: left; display: grid; grid-template-columns: 9em 1fr; align-items: center; gap: 0.6em; }
+.lifecycle .step b { font-family: Oswald, sans-serif; text-transform: uppercase; font-size: 1.3em; color: var(--ts-sky); }
+.lifecycle .step b::before { content: '✔ '; color: var(--lint); }
 .lifecycle .step span { color: var(--muted); }
-.lifecycle .step + .step::before { content: '→'; position: absolute; left: -0.9em; top: 0.3em; color: var(--muted); font-size: 1.4em; }
 .lifecycle .step.blocked.visible { border-color: var(--base); background: color-mix(in srgb, var(--base) 20%, transparent); }
 .lifecycle .step.blocked.visible b { color: var(--base); }
-.lifecycle .step.blocked.visible::after { content: '✖ banner intercepts'; position: absolute; left: 0; bottom: -1.6em; color: var(--base); font-weight: 700; }
-.lifecycle-outcomes { margin-top: 0.4em; }
+.lifecycle .step.blocked.visible b::before { content: '✖ '; color: var(--base); }
+.lifecycle-outcomes { margin-top: 0.2em; }
 .lifecycle-outcomes h3 { font-family: ui-monospace, monospace; text-transform: none; font-size: 0.8em; }

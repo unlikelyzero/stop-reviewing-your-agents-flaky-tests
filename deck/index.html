@@ -265,25 +265,35 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
 <template id="alt-02-force-click">
   <section class="lifecycle-slide">
     <h3>What <code>click()</code> checks before it clicks</h3>
-    <div class="lifecycle">
-      <div class="step fragment" data-fragment-index="1"><b>Attached</b><span>in the DOM</span></div>
-      <div class="step fragment" data-fragment-index="2"><b>Visible</b><span>non-empty box, no <code>visibility:hidden</code></span></div>
-      <div class="step fragment" data-fragment-index="3"><b>Stable</b><span>same box across two animation frames</span></div>
-      <div class="step fragment blocked" data-fragment-index="4"><b>Receives events</b><span>hit-test at the click point returns <em>this</em> element</span></div>
-      <div class="step fragment" data-fragment-index="6"><b>Enabled</b><span>not <code>disabled</code></span></div>
+    <div class="lifecycle-wrap">
+      <!-- a mock of the composer + the overlay seam, driven by the same fragment indices as the checks -->
+      <div class="stage">
+        <div class="mock-composer">
+          <div class="mock-input">Hello from the demo</div>
+          <button class="mock-send" type="button">Send message</button>
+          <div class="crosshair fragment" data-fragment-index="1"></div>
+        </div>
+        <div class="mock-banner fragment" data-fragment-index="4">
+          <span>🎉 New: scheduled agents are live.</span><button type="button">Got it</button>
+        </div>
+        <div class="stage-label fragment" data-fragment-index="4">hit-test at (x,y) → <code>&lt;div role="dialog"&gt;</code>, not the button</div>
+      </div>
+      <ol class="lifecycle">
+        <li class="step fragment" data-fragment-index="1"><b>Attached</b><span>in the DOM</span></li>
+        <li class="step fragment" data-fragment-index="2"><b>Visible</b><span>non-empty box, not <code>visibility:hidden</code></span></li>
+        <li class="step fragment" data-fragment-index="3"><b>Stable</b><span>same box across two animation frames</span></li>
+        <li class="step fragment blocked" data-fragment-index="4"><b>Receives events</b><span>hit-test at the click point returns <em>this</em> element</span></li>
+        <li class="step fragment" data-fragment-index="6"><b>Enabled</b><span>not <code>disabled</code></span></li>
+      </ol>
     </div>
-    <p class="small fragment" data-fragment-index="4">
-      <span class="tag tag-base">overlay seam</span> the <code>Announcement</code> dialog lands on top of the composer 200–1200&nbsp;ms after load.
-      The hit-test returns the banner, not the button.
-    </p>
     <div class="two-col lifecycle-outcomes">
       <div class="fragment" data-fragment-index="5">
         <h3><code>click()</code></h3>
-        <p class="small"><strong>Retries</strong> every check until the banner is gone or the timeout hits.<br/>Then: <em>“&lt;div role=dialog&gt; intercepts pointer events”</em> — the failure names the cause.</p>
+        <p class="small"><strong>Retries</strong> the checks until the banner is gone or the timeout hits. The failure names the cause: <em>“&lt;div role=dialog&gt; intercepts pointer events”</em>.</p>
       </div>
       <div class="fragment" data-fragment-index="7">
         <h3><code>click({ force: true })</code></h3>
-        <p class="small"><strong>Skips</strong> Visible, Stable, Receives events, Enabled. Dispatches at the coordinates anyway.<br/>The banner gets the click. The test continues. It fails three steps later, on an assertion that has nothing to do with the banner.</p>
+        <p class="small"><strong>Skips</strong> Visible, Stable, Receives events, Enabled — dispatches at the coordinates anyway. The banner gets the click; the test fails three steps later on an unrelated assertion.</p>
       </div>
     </div>
     <p class="small muted fragment" data-fragment-index="7">Linted fix: <code>getByRole('button', { name: 'Dismiss announcement' }).click()</code> first — then the real click passes every check.</p>
