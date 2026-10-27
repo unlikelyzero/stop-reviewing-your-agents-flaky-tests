@@ -411,9 +411,10 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
   </section>
 </template>
 
-<!-- Rule 7: no-restricted-syntax for patterns no plugin rule covers (inserted before the video pair by deck.js). -->
-<template id="explain-07-loophole">
+<!-- Rule 7: no-restricted-syntax for patterns no plugin rule covers; opens the rule 7 stack, ahead of the loophole (inserted by deck.js). -->
+<template id="before-07-loophole">
   <section class="nrs-slide">
+    <p class="kicker">Rule 7 / 7</p>
     <h3><code>no-restricted-syntax</code>: for anything else</h3>
     <p class="small">Saw it twice in review? It's one AST selector and a message that says what to do instead.</p>
     <div class="nrs-grid">
