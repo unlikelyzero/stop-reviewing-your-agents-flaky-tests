@@ -122,12 +122,9 @@ function buildSegments(data) {
         vid.addEventListener('ended', () => side.classList.add('ended'));
       }
     }
-    // A rule can add a slide ahead of its video pair: <template id="explain-<seg.id>">.
-    const explain = document.getElementById(`explain-${seg.id}`);
-    if (explain) node.querySelector('.video-slide').before(explain.content.cloneNode(true));
-    // A rule can open its stack with a slide ahead of its intro: <template id="before-<seg.id>">.
-    const before = document.getElementById(`before-${seg.id}`);
-    if (before) node.querySelector('section').prepend(before.content.cloneNode(true));
+    // A rule can replace its intro slide: <template id="intro-<seg.id>">.
+    const intro = document.getElementById(`intro-${seg.id}`);
+    if (intro) node.querySelector('section > section').replaceWith(intro.content.cloneNode(true));
     // A rule can swap its video pair for a bespoke slide: <template id="alt-<seg.id>">.
     const alt = document.getElementById(`alt-${seg.id}`);
     if (alt) node.querySelector('.video-slide').replaceWith(alt.content.cloneNode(true));

@@ -336,7 +336,7 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
         <ul>
           <li>Locators: <code>nth()</code> and raw CSS</li>
           <li>Assertions and conditionals</li>
-          <li><code>no-restricted-syntax</code> for anything else, and the helper loophole</li>
+          <li><code>no-restricted-syntax</code> for anything else</li>
           <li>Rolling it out without boiling the ocean</li>
         </ul>
       </div>
@@ -389,8 +389,8 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
   </section>
 </template>
 
-<!-- Rule 7: no-restricted-syntax for patterns no plugin rule covers; opens the rule 7 stack, ahead of the loophole (inserted by deck.js). -->
-<template id="before-07-loophole">
+<!-- Rule 7: no-restricted-syntax for patterns no plugin rule covers; replaces the rule 7 intro (swapped in by deck.js). -->
+<template id="intro-07-loophole">
   <section class="nrs-slide">
     <p class="kicker">Rule 7 / 7</p>
     <h3><code>no-restricted-syntax</code>: for anything else</h3>
@@ -417,10 +417,13 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
         <p>→ Derive test data from the seeded fixture, so a failure reproduces on the next run.</p>
       </div>
     </div>
-    <p class="small muted">Write selectors in the <a href="https://typescript-eslint.io/play">typescript-eslint playground</a>. When one needs an allow-list or has to know which file it's in, graduate it to a custom rule: next.</p>
-    <aside class="notes">The plugin covers the Playwright API. Everything specific to your team — a timeout bump, retries in a spec, a hard-coded host, unseeded data — is one no-restricted-syntax entry: an AST selector for the pattern and a message written as the fix. Each of these selectors runs as written. When the selector can't express the rule — it needs an allow-list, or it depends on which file it's in — that's when you write a custom rule, and that's the loophole we'll look at next.</aside>
+    <p class="small muted">Write selectors in the <a href="https://typescript-eslint.io/play">typescript-eslint playground</a>. When one needs an allow-list or has to know which file it's in, graduate it to a custom rule.</p>
+    <aside class="notes">The plugin covers the Playwright API. Everything specific to your team — a timeout bump, retries in a spec, a hard-coded host, unseeded data — is one no-restricted-syntax entry: an AST selector for the pattern and a message written as the fix. Each of these selectors runs as written. When the selector can't express the rule — it needs an allow-list, or it depends on which file it's in — that's when you graduate it to a custom rule, like no-page-in-spec in this repo.</aside>
   </section>
 </template>
+
+<!-- Rule 7: no video pair; an empty alt template removes it. -->
+<template id="alt-07-loophole"></template>
 
 <!-- Rule 6: one isVisible() check picks a branch by timing; the playhead drives the banner in the screenshot (replaces the video pair). -->
 <template id="alt-06-conditional">
