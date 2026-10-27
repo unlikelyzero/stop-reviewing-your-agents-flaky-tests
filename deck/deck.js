@@ -128,6 +128,9 @@ function buildSegments(data) {
         vid.addEventListener('ended', () => side.classList.add('ended'));
       }
     }
+    // A rule can add a slide ahead of its video pair: <template id="explain-<seg.id>">.
+    const explain = document.getElementById(`explain-${seg.id}`);
+    if (explain) node.querySelector('.video-slide').before(explain.content.cloneNode(true));
     // A rule can swap its video pair for a bespoke slide: <template id="alt-<seg.id>">.
     const alt = document.getElementById(`alt-${seg.id}`);
     if (alt) node.querySelector('.video-slide').replaceWith(alt.content.cloneNode(true));
@@ -137,6 +140,43 @@ function buildSegments(data) {
     if (after) built.push(after.content.cloneNode(true));
   });
   mount.replaceWith(...built);
+}
+
+/* ---- rule 5: a playhead on the timeline replays the bubble in the screenshot ---- */
+// What the assistant bubble holds up to each point on the timeline (fraction of its width); matches the bands.
+const STREAM = [[0.18, '· · ·'], [0.24, 'echo-me-7f3a'], [0.32, 'e'], [0.40, 'echo'], [0.55, 'echo-me-'], [0.70, 'echo-me-7f'], [Infinity, 'echo-me-7f3a']];
+let streamRaf = 0;
+function playStream(slide) {
+  cancelAnimationFrame(streamRaf);
+  const stream = slide?.querySelector('.stream');
+  if (!stream) return;
+  const track = stream.querySelector('.track');
+  const head = stream.querySelector('.playhead');
+  const shot = slide.querySelector('.target-shot');
+  const bubble = shot.querySelector('.live-bubble span');
+  const readout = slide.querySelector('.readout code');
+  const lanes = [...stream.querySelectorAll('.track')].filter(el => !el.classList.contains('fragment') || el.classList.contains('visible'));
+  const last = lanes[lanes.length - 1];
+  head.style.top = `${track.offsetTop}px`;
+  head.style.height = `${last.offsetTop + last.offsetHeight - track.offsetTop}px`;
+  // Reveal renumbers fragments from 0: 0 is the one-shot read (stops where it lands), 2+ is toContainText
+  // (stops at its first passing poll). Before and between them, the timeline loops.
+  const f = Reveal.getIndices().f ?? -1;
+  const [stopAt, ms] = f === 0 ? [0.41, 2400] : f >= 2 ? [0.2, 1400] : [null, 6000];
+  const start = performance.now();
+  const frame = now => {
+    const p = (now - start) / ms;
+    const t = stopAt === null ? p % 1 : Math.min(p, 1) * stopAt;
+    const text = STREAM.find(([end]) => t < end)[1];
+    const done = stopAt !== null && p >= 1;
+    head.style.left = `${track.offsetLeft + t * track.offsetWidth}px`;
+    bubble.textContent = text;
+    readout.textContent = `"${text}"`;
+    shot.classList.toggle('holds', text.includes('echo-me-7f3a'));
+    shot.classList.toggle('snap', done);
+    if (!done) streamRaf = requestAnimationFrame(frame);
+  };
+  streamRaf = requestAnimationFrame(frame);
 }
 
 /* ---- synced playback ---- */
@@ -171,7 +211,11 @@ function togglePair(vids) {
     },
   });
 
+  Reveal.on('ready', e => playStream(e.currentSlide));
+  Reveal.on('fragmentshown', () => playStream(Reveal.getCurrentSlide()));
+  Reveal.on('fragmenthidden', () => playStream(Reveal.getCurrentSlide()));
   Reveal.on('slidechanged', e => {
+    playStream(e.currentSlide);
     pairOn(e.previousSlide).forEach(v => v.pause());
     const vids = pairOn(e.currentSlide);
     if (vids.length) setTimeout(() => playPair(vids), 350);

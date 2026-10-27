@@ -179,6 +179,34 @@
 .stage:has(.mock-banner.visible) .mock-send .label { font-size: inherit; }
 .stage:has(.mock-banner.visible) .mock-send .label::before, .stage:has(.mock-banner.visible) .mock-send .label::after { content: none; }
 
+/* ---- one-shot read vs. streaming text (rule 5) ---- */
+.stream { display: grid; grid-template-columns: 15em 1fr; gap: 0.5em 0.8em; align-items: center; margin: 0.6em 0; font-size: 0.55em; text-align: left; }
+.stream .lane-label { color: var(--muted); }
+.stream .lane-label { margin-bottom: 1.6em; } .stream .lane-label:first-child { margin-bottom: 0; }
+.stream .lane-label code { color: #fff; font-size: 0.8em; white-space: nowrap; }
+.stream .track { position: relative; display: flex; height: 3.2em; border-radius: 8px; overflow: visible; }
+.stream .band { display: flex; flex-direction: column; justify-content: center; padding: 0 0.5em; min-width: 0; border-right: 2px solid var(--ts-navy); }
+.stream .band code { font-size: 0.8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; background: none; }
+.stream .band span { font-size: 0.7em; color: rgba(255,255,255,0.75); }
+.stream .band.bad { background: color-mix(in srgb, var(--base) 35%, transparent); }
+.stream .band.good { background: color-mix(in srgb, var(--lint) 40%, transparent); }
+.stream .lane { background: rgba(255,255,255,0.05); height: 2.6em; margin-bottom: 1.6em; }
+.stream .read { position: absolute; top: 50%; width: 0.9em; height: 0.9em; margin: -0.45em 0 0 -0.45em; border-radius: 50%; }
+.stream .read.one { width: 1.3em; height: 1.3em; margin: -0.65em 0 0 -0.65em; box-shadow: 0 0 0 4px rgba(255,255,255,0.25); }
+.stream .read.bad { background: var(--base); } .stream .read.good { background: var(--lint); }
+.stream .read-label { position: absolute; top: 100%; margin-top: 0.2em; transform: translateX(-50%); white-space: nowrap; font-size: 0.8em; color: var(--base); font-weight: 600; }
+.stream .read-label.good-label { color: var(--lint); transform: none; margin-left: -0.5em; }
+.stream .tick { position: absolute; top: 20%; bottom: 20%; width: 3px; margin-left: -1.5px; background: var(--base); opacity: 0.8; }
+.stream .tick.good { background: var(--lint); opacity: 1; width: 5px; }
+.stream .tick.stop::after { content: '✔'; position: absolute; left: 8px; top: -0.2em; color: var(--lint); font-weight: 700; }
+.stream .tally { grid-column: 2; margin: -1.2em 0 0.6em; font-size: 0.9em; }
+.stream .tally .b { color: var(--base); }
+.target { display: flex; align-items: center; gap: 1em; margin: 0.2em 0 0; text-align: left; }
+.target-shot { position: relative; margin: 0; flex: 0 0 600px; }
+.target-shot img { display: block; width: 100%; margin: 0; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); }
+/* the assistant bubble in rule5-reply.png (680x270) */
+.target-box { position: absolute; left: 3%; top: 61%; width: 47%; height: 20%; border: 3px solid var(--lint); border-radius: 10px; }
+
 /* ---- green today, red later: a test's run history (problem slide) ---- */
 .flake-timeline { position: relative; display: grid; grid-template-columns: repeat(9, 1fr); align-items: start; margin: 0.6em 0 0.2em; font-size: 0.6em; }
 .flake-timeline .tl-track { position: absolute; left: 5.5%; right: 5.5%; top: 1.2em; height: 4px; background: rgba(255,255,255,0.12); border-radius: 2px; }
@@ -212,3 +240,16 @@
 .app-legend b { font-size: 0.9em; flex: none; }
 .app-tour ul { font-size: 0.5em; }
 .app-legend code { white-space: nowrap; }
+
+/* ---- rule 5: the playhead and the live bubble it drives ---- */
+.stream { position: relative; }
+.stream .playhead { position: absolute; z-index: 4; width: 3px; margin-left: -1.5px; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.7); pointer-events: none; }
+.target-shot { container-type: inline-size; }
+/* sits exactly on the assistant bubble in rule5-reply.png (680x270: x 26–331, y 171–214) */
+.live-bubble { position: absolute; left: 3.82%; top: 63.33%; width: 44.85%; height: 15.93%; background: rgb(32, 41, 56); border-radius: 1.5cqw; display: flex; align-items: center; padding-left: 2.06cqw; box-sizing: border-box; color: rgb(204, 214, 224); font-size: 2.1cqw; font-weight: 500; }
+.target-shot .target-box { border-color: var(--base); transition: border-color 0.15s; }
+.target-shot.holds .target-box { border-color: var(--lint); }
+.target-shot.snap .target-box { animation: snap 0.6s ease-out; }
+@keyframes snap { from { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0.85); } to { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
+.readout code { color: var(--base); }
+.stream-slide:has(.target-shot.holds) .readout code { color: var(--lint); }

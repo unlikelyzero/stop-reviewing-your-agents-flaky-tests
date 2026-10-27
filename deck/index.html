@@ -385,6 +385,54 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
   </section>
 </template>
 
+<!-- Rule 5: when a one-shot textContent() read lands, against what the bubble holds (inserted before the video pair by deck.js). -->
+<template id="explain-05-web-first">
+  <section class="stream-slide">
+    <h3>One read, at one instant</h3>
+    <div class="target">
+      <figure class="target-shot">
+        <img src="rule5-reply.png" alt="what-iff chat: the sent message and the assistant reply, both reading echo-me-7f3a" />
+        <div class="live-bubble"><span>echo-me-7f3a</span></div>
+        <i class="target-box"></i>
+      </figure>
+      <p class="small">What the test is looking for: the <strong>assistant</strong> bubble contains <code>echo-me-7f3a</code>.<br/><span class="readout">The bubble, at the playhead: <code>"echo-me-7f3a"</code></span></p>
+    </div>
+    <div class="stream">
+      <i class="playhead"></i>
+      <div class="lane-label">assistant bubble</div>
+      <div class="track">
+        <div class="band bad" style="flex: 18"><code>· · ·</code><span>pending</span></div>
+        <div class="band good" style="flex: 6"><code>echo-me-7f3a</code><span>300 ms</span></div>
+        <div class="band bad" style="flex: 46"><code>e → echo → echo-me-</code><span>re-streamed in chunks</span></div>
+        <div class="band good" style="flex: 30"><code>echo-me-7f3a</code><span>settled</span></div>
+      </div>
+
+      <div class="lane-label fragment" data-fragment-index="1"><code>expect(await body.textContent())</code></div>
+      <div class="track lane fragment" data-fragment-index="1">
+        <i class="read bad one fragment fade-out" data-fragment-index="2" style="left: 41%"></i>
+        <div class="read-label fragment fade-out" data-fragment-index="2" style="left: 41%">reads <code>"echo-me-"</code> · <code>toContain</code> fails · no retry</div>
+        <!-- 20 runs; positions are illustrative, the 11/9 split is the flake-lab result -->
+        <span class="fragment" data-fragment-index="2">
+          <i class="read bad" style="left: 6%"></i><i class="read bad" style="left: 13%"></i>
+          <i class="read good" style="left: 19.5%"></i><i class="read good" style="left: 22.5%"></i>
+          <i class="read bad" style="left: 29%"></i><i class="read bad" style="left: 35%"></i><i class="read bad" style="left: 41%"></i><i class="read bad" style="left: 47%"></i><i class="read bad" style="left: 53%"></i><i class="read bad" style="left: 59%"></i><i class="read bad" style="left: 65%"></i>
+          <i class="read good" style="left: 72%"></i><i class="read good" style="left: 75%"></i><i class="read good" style="left: 78%"></i><i class="read good" style="left: 81%"></i><i class="read good" style="left: 84%"></i><i class="read good" style="left: 87%"></i><i class="read good" style="left: 90%"></i><i class="read good" style="left: 93%"></i><i class="read good" style="left: 96%"></i>
+        </span>
+      </div>
+      <p class="tally fragment" data-fragment-index="2"><b class="b">11 / 20 passed</b> — same test, same code; the verdict depends on <em>when</em> the read lands <span class="muted">(dot positions illustrative)</span></p>
+
+      <div class="lane-label fragment" data-fragment-index="3"><code>await expect(article).toContainText()</code></div>
+      <div class="track lane fragment" data-fragment-index="3">
+        <i class="tick bad" style="left: 4%"></i><i class="tick bad" style="left: 9%"></i><i class="tick bad" style="left: 14%"></i>
+        <i class="tick good stop" style="left: 20%"></i>
+        <div class="read-label good-label" style="left: 20%">retries until it holds — passes here, or in the settled window on a slower run</div>
+      </div>
+    </div>
+    <p class="small muted fragment" data-fragment-index="4"><code>prefer-web-first-assertions</code> is not about style. A snapshot asks the page <em>“what is there now?”</em>; a web-first assertion asks <em>“has it become true yet?”</em></p>
+    <aside class="notes">The playhead replays the top lane into the screenshot: watch the bubble blank, flash the full text, then refill in chunks. Top lane is what the bubble holds over time; red is any moment the sent text isn't in it. The baseline reads once — wherever that lands is the verdict. Twenty runs, eleven landed green. toContainText keeps asking until the answer is yes, up to the timeout, so the red windows cost it time, not the test.</aside>
+  </section>
+</template>
+
 <script src="vendor/reveal/reveal.js"></script>
 <script src="vendor/reveal-plugin/highlight/highlight.js"></script>
 <script src="vendor/reveal-plugin/notes/notes.js"></script>
