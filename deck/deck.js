@@ -3,7 +3,7 @@
 const PROMPTS = {
   '01-hard-wait': 'Write a test that sends a chat message and checks the assistant replies.',
   '02-force-click': "The send-button test fails with 'element intercepts pointer events'. Make it pass.",
-  '03-nth-first': "The test fails with 'strict mode violation: resolved to 2 elements'. Fix it.",
+  '03-nth-first': 'Write a test that opens my draft thread.',
   '04-raw-locator': 'Write a test that the thread name shows in the header after the first message.',
   '05-web-first': "Assert the assistant's reply contains the text I sent.",
   '06-conditional': 'Sometimes a banner shows up and breaks the test. Handle it.',
