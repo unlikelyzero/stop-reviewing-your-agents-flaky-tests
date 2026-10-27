@@ -207,6 +207,33 @@
 /* the assistant bubble in rule5-reply.png (680x270) */
 .target-box { position: absolute; left: 3%; top: 61%; width: 47%; height: 20%; border: 3px solid var(--lint); border-radius: 10px; }
 
+/* ---- same locator, two environments (rule 3) ---- */
+.nth-code { width: auto; font-size: 0.5em; margin: 0.3em auto; }
+.sidebars { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5em; margin: 0.5em 0; font-size: 0.65em; text-align: left; }
+.sidebar { margin: 0; background: #0f1117; border: 1px solid rgba(255,255,255,0.12); border-top: 8px solid; border-radius: 12px; padding: 0.7em 0.9em; }
+.sidebar.env-ok { border-top-color: var(--lint); } .sidebar.env-bad { border-top-color: var(--base); }
+.sidebar figcaption { font-family: Oswald, sans-serif; text-transform: uppercase; font-size: 1.6em; font-weight: 600; margin-bottom: 0.3em; }
+.sidebar.env-ok figcaption { color: var(--lint); } .sidebar.env-bad figcaption { color: var(--base); }
+.sidebar figcaption span { display: block; font-family: Poppins, sans-serif; text-transform: none; font-weight: 400; font-size: 0.5em; color: var(--muted); }
+.sidebar .sb-head { font-size: 0.65em; letter-spacing: 0.08em; text-transform: uppercase; color: #8b90a0; margin-bottom: 0.3em; }
+.reveal .sidebar ol { display: block; list-style: none; margin: 0; padding: 0; }
+.sidebar li { position: relative; display: grid; grid-template-columns: 3.4em 1.6em 1fr auto auto; align-items: center; gap: 0.5em; padding: 0.4em 0.6em; margin: 0.15em 0; border-radius: 8px; color: #cfd3dc; border: 3px solid transparent; }
+.sidebar li b { font-family: ui-monospace, monospace; font-size: 0.75em; font-weight: 400; color: #8b90a0; }
+.sidebar li i { width: 1.6em; height: 1.6em; border-radius: 50%; background: #2a2e3a; color: #9aa0b0; font-style: normal; font-size: 0.8em; display: grid; place-items: center; }
+.sidebar li small { color: #9aa0b0; font-size: 0.75em; }
+.sidebar li.other { opacity: 0.3; }
+/* the row nth(1) clicks: solid green where it is the draft, solid red where it is not */
+.sidebar li.slot1 { color: #fff; font-weight: 700; }
+.sidebar li.slot1 b { color: #fff; font-weight: 700; }
+.sidebar.env-ok li.slot1 { background: var(--lint); border-color: var(--lint); }
+.sidebar.env-bad li.slot1 { background: var(--base); border-color: var(--base); }
+.sidebar li.slot1::after { content: '◀ clicked'; font-family: ui-monospace, monospace; font-size: 0.75em; white-space: nowrap; color: #fff; }
+.sidebar li.slot1 small { color: rgba(255,255,255,0.85); }
+.sidebar.env-bad li.target { border: 3px dashed var(--lint); color: #fff; font-weight: 600; }
+.sidebar.env-bad li.target small { color: var(--lint); font-weight: 700; }
+.sidebar .verdict { margin: 0.6em 0 0; font-weight: 700; font-size: 1.1em; }
+.sidebar .verdict.good { color: var(--lint); } .sidebar .verdict.bad { color: var(--base); }
+
 /* ---- green today, red later: a test's run history (problem slide) ---- */
 .flake-timeline { position: relative; display: grid; grid-template-columns: repeat(9, 1fr); align-items: start; margin: 0.6em 0 0.2em; font-size: 0.6em; }
 .flake-timeline .tl-track { position: absolute; left: 5.5%; right: 5.5%; top: 1.2em; height: 4px; background: rgba(255,255,255,0.12); border-radius: 2px; }

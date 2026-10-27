@@ -385,6 +385,30 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
   </section>
 </template>
 
+<!-- Rule 3: the same locator against two environments' data (replaces the video pair). -->
+<template id="alt-03-nth-first">
+  <section class="nth-slide">
+    <h3>Unique here. Not everywhere.</h3>
+    <pre class="nth-code"><code class="language-ts" data-trim>await page.getByRole('link', { name: 'New thread' }).nth(1).click();</code></pre>
+    <div class="sidebars">
+      <figure class="sidebar env-ok">
+        <figcaption>Local<span>where the agent generated the test</span></figcaption>
+        <div class="sb-head">Recent threads</div>
+        <ol><li class="other"><b></b><i>B</i>Book club<small></small></li><li class="match "><b>nth(0)</b><i>N</i>New thread<small></small></li><li class="match slot1 target"><b>nth(1)</b><i>N</i>New thread<small>draft</small></li><li class="other"><b></b><i>R</i>Recipes<small></small></li></ol>
+        <p class="verdict good">✔ clicks the draft</p>
+      </figure>
+      <figure class="sidebar env-bad">
+        <figcaption>Staging<span>a different dataset</span></figcaption>
+        <div class="sb-head">Recent threads</div>
+        <ol><li class="match "><b>nth(0)</b><i>N</i>New thread<small></small></li><li class="other"><b></b><i>Q</i>Q3 planning<small></small></li><li class="match slot1 "><b>nth(1)</b><i>N</i>New thread<small></small></li><li class="match target"><b>nth(2)</b><i>N</i>New thread<small>draft · the one you meant</small></li><li class="other"><b></b><i>B</i>Book club<small></small></li><li class="other"><b></b><i>R</i>Recipes<small></small></li></ol>
+        <p class="verdict bad">✖ clicks someone else's thread</p>
+      </figure>
+    </div>
+    <p class="small">The agent's locator was the most unique one <em>on the data it could see</em>. Another environment has other data.</p>
+    <aside class="notes">The agent clicked the thread through Playwright and got the most unique locator available at that moment. Every new thread in what-iff is called "New thread", so the best it could do was "the second one". On local that's the draft. Staging has a different dataset, and the second New thread is somebody else's. The app isn't the same everywhere; an index only describes the one place it was generated.</aside>
+  </section>
+</template>
+
 <!-- Rule 5: when a one-shot textContent() read lands, against what the bubble holds (inserted before the video pair by deck.js). -->
 <template id="explain-05-web-first">
   <section class="stream-slide">
