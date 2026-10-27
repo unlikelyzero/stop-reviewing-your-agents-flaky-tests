@@ -56,18 +56,6 @@
 .compare { max-width: 1250px; margin: 0 auto; }
 .controls-hint { margin-top: 0.15em; }
 
-/* ---- results grid ---- */
-.results-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.6em; font-size: 0.45em; }
-.results-grid .cell { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 0.6em 0.4em; }
-.results-grid .cell .name { color: var(--muted); font-family: ui-monospace, monospace; margin-bottom: 0.4em; min-height: 2.4em; }
-.results-grid .bar { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; margin: 0.25em 0; }
-.results-grid .bar > i { display: block; height: 100%; }
-.results-grid .bar-base > i { background: var(--base); }
-.results-grid .bar-lint > i { background: var(--lint); }
-.results-grid .pct { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; font-weight: 700; }
-.results-grid .pct .b { color: var(--base); } .results-grid .pct .l { color: var(--lint); }
-.reveal .byline .avatar { width: 2.2em; height: 2.2em; border-radius: 50%; vertical-align: middle; margin-right: 0.4em; }
-
 /* ---- ThinkSys theme ---- */
 :root {
   --ts-navy: #0A3E5F; --ts-navy-deep: #072A42; --ts-sky: #2BAAE1; --ts-magenta: #97067F; --ts-orange: #F0A23B;
@@ -211,3 +199,16 @@
 .tl-caption.visible { transition-delay: 4.6s; }
 @keyframes tl-fill { to { transform: scaleX(1); } }
 @keyframes tl-pop { from { opacity: 0; transform: translateY(0.6em) scale(0.6); } to { opacity: 1; transform: none; } }
+
+/* ---- the app in the videos ---- */
+.app-tour { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1em; align-items: center; text-align: left; }
+.app-shot { position: relative; margin: 0; }
+.app-shot img { display: block; width: 100%; margin: 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); }
+.app-shot .callout { position: absolute; border: 3px solid var(--ts-orange); border-radius: 8px; }
+.app-shot .callout b, .app-legend b { display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--ts-orange); color: var(--ts-navy-deep); font-size: 0.55em; font-weight: 700; }
+.app-shot .callout b { position: absolute; right: -0.75em; top: -0.75em; }
+.reveal .app-legend { display: block; list-style: none; margin: 0 0 0.5em; padding: 0; font-size: 0.6em; }
+.app-legend li { display: flex; align-items: center; gap: 0.5em; margin: 0.25em 0; }
+.app-legend b { font-size: 0.9em; flex: none; }
+.app-tour ul { font-size: 0.5em; }
+.app-legend code { white-space: nowrap; }

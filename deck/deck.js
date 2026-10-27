@@ -137,24 +137,6 @@ function buildSegments(data) {
     if (after) built.push(after.content.cloneNode(true));
   });
   mount.replaceWith(...built);
-  document.querySelectorAll('#repeats-inline, #repeats-total').forEach(el => (el.textContent = data.repeats || 'N'));
-}
-
-function buildResults(data) {
-  const grid = document.getElementById('results-grid');
-  grid.innerHTML = '';
-  for (const seg of data.segments) {
-    const b = seg.baseline?.passRate ?? 0;
-    const l = seg.linted?.passRate ?? 0;
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.innerHTML = `
-      <div class="name">${seg.rule}</div>
-      <div class="bar bar-base"><i style="width:${b}%"></i></div>
-      <div class="bar bar-lint"><i style="width:${l}%"></i></div>
-      <div class="pct"><span class="b">${seg.baseline?.passRate ?? '—'}%</span><span class="l">${seg.linted?.passRate ?? '—'}%</span></div>`;
-    grid.appendChild(cell);
-  }
 }
 
 /* ---- synced playback ---- */
@@ -173,7 +155,6 @@ function togglePair(vids) {
 (async () => {
   const data = await loadData();
   buildSegments(data);
-  buildResults(data);
 
   Reveal.initialize({
     hash: true,

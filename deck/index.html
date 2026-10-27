@@ -39,7 +39,7 @@
       <ol class="agenda">
         <li><b>The problem</b><span>why agent-written Playwright tests flake, and why review doesn't catch it</span></li>
         <li><b>The mechanism</b><span>an ESLint hook that lands the fix instruction at the moment of the mistake</span></li>
-        <li><b>The evidence</b><span>7 rules, same prompt twice, same injected flake — side by side</span></li>
+        <li><b>The examples</b><span>7 rules: the shortcut the agent took, and the test after the lint hook</span></li>
         <li><b>Rolling it out</b><span>turn every rule on today without fixing anything today</span></li>
       </ol>
       <p class="small muted">We'll pause for questions after rule 2 and at the end — drop them in the Q&amp;A panel as they come.</p>
@@ -122,34 +122,38 @@ https://github.com/playwright-community/eslint-plugin-playwright/tree/main/docs/
       <p class="small">Same rule. One repairs on the first try. <strong>Where</strong> the verdict lands + <strong>what</strong> it says = the "linted" setup in every demo that follows.</p>
     </section>
 
-    <!-- ============================================================ DEMO SETUP -->
+    <!-- ============================================================ THE APP IN THE VIDEOS -->
     <section>
-      <p class="kicker">Does it work?</p>
-      <h2>The experiment</h2>
-      <ul>
-        <li>App: <a href="https://github.com/theimaginaryfoundation/what-iff">what-iff</a> — Angular + Go, mock-LLM mode</li>
-        <li>Same prompt, twice: <span class="tag tag-base">baseline</span> no Playwright lint rules · <span class="tag tag-lint">linted</span> rules + hook</li>
-        <li>Then: inject the conditions that make tests flake, run each <span id="repeats-inline">N</span>×</li>
-      </ul>
-      <pre><code class="language-ts" data-trim>
-// tests/support/flake.ts — injected from the test side, app untouched
-slowApi      API replies 300–2500 ms late
-overlay      banner mounts late, covers the composer
-duplicates   decoy "send" control appears
-renameCss    BEM classes rewritten, ids renamed
-streamText   reply body arrives in chunks
-      </code></pre>
+      <p class="kicker">The app in the videos</p>
+      <h2>Meet what-iff</h2>
+      <div class="app-tour">
+        <figure class="app-shot">
+          <img src="what-iff-chat.jpg" alt="what-iff chat screen: sidebar with Recent threads, a thread with the sent message and the assistant's echo, and the composer" />
+          <i class="callout" style="left: 0%; top: 41%; width: 23.4%; height: 9.5%"><b>1</b></i>
+          <i class="callout" style="left: 24.2%; top: 0%; width: 50%; height: 9%"><b>2</b></i>
+          <i class="callout" style="left: 24.2%; top: 10.5%; width: 48.5%; height: 20.5%"><b>3</b></i>
+          <i class="callout" style="left: 24.6%; top: 86.4%; width: 46.4%; height: 12.6%"><b>4</b></i>
+        </figure>
+        <div>
+          <ol class="app-legend">
+            <li><b>1</b>Recent threads</li>
+            <li><b>2</b>Thread name in the header</li>
+            <li><b>3</b>Your message, and the assistant's reply</li>
+            <li><b>4</b>Composer: <code>Message</code> box, <code>Send message</code> button</li>
+          </ol>
+          <ul class="small">
+            <li>Open-source AI chat app: Angular front end, Go API</li>
+            <li>Mock-LLM mode: the assistant echoes what you send, so replies are predictable</li>
+            <li>Each video: fresh account, seeded chat, type, send, check the reply</li>
+            <li><span class="tag tag-base">left</span> the agent's first draft · <span class="tag tag-lint">right</span> after the lint hook</li>
+          </ul>
+        </div>
+      </div>
+      <aside class="notes">This is what you'll see in every video. what-iff is an open-source chat app, Angular and Go, running with a mock model that echoes what you type, so the assistant's reply is predictable. Every test signs up a fresh account, opens a seeded chat, types in the composer, sends, and checks the reply. Left side is the agent's first draft; right side is after the lint hook. Each one runs with one thing that makes tests flake — a slow API, a banner — and the rule slide names it.</aside>
     </section>
 
     <!-- ============================================================ SEGMENTS (generated) -->
     <div id="segments"></div>
-
-    <!-- ============================================================ RESULTS -->
-    <section>
-      <p class="kicker">The evidence, in numbers</p>
-      <h2>Results: <span id="repeats-total">N</span> runs per spec, same flake</h2>
-      <div id="results-grid" class="results-grid"></div>
-    </section>
 
     <!-- ============================================================ RATCHET -->
     <section>
