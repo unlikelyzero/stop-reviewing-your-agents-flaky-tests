@@ -3,7 +3,7 @@
 const PROMPTS = {
   '01-hard-wait': 'Write a test that sends a chat message and checks the assistant replies.',
   '02-force-click': "The send-button test fails with 'element intercepts pointer events'. Make it pass.",
-  '03-nth-first': "The test fails with 'strict mode violation: resolved to 2 elements'. Fix it.",
+  '03-nth-first': 'Write a test that opens my draft thread.',
   '04-raw-locator': 'Write a test that the thread name shows in the header after the first message.',
   '05-web-first': "Assert the assistant's reply contains the text I sent.",
   '06-conditional': 'Sometimes a banner shows up and breaks the test. Handle it.',
@@ -33,13 +33,13 @@ const LINT_OUT = {
     expect(text).toContain('echo-me-7f3a');
     → Replace expect(await locator.textContent()) with
       await expect(locator).toContainText(...) so the assertion retries.`,
-  '06-conditional': `✗ tests/06-conditional.spec.ts:16:5  [playwright/no-conditional-in-test]
+  '06-conditional': `✗ tests/06-conditional.spec.ts:16:15  [no-restricted-syntax]
     if (await banner.isVisible()) {
-    → Avoid having conditionals in tests.`,
-  '07-loophole': `✗ tests/07-loophole.spec.ts:16:11  [demo/no-page-in-spec]
-    await css(page, '#chat-composer-input').fill('Laundered selector');
-    → Specs must not touch \`page\` directly. Move this call into a page object under
-      tests/pages/ and call its method from the spec. Page objects own locators; specs own intent.`,
+    → isVisible() / isHidden() / isEnabled() answer once, right now, without waiting, so an if on
+      them picks a path by timing. Remove the branch. If the element belongs to this page state,
+      assert it: await expect(locator).toBeVisible(), then act on it. If it can appear at any time
+      (cookie notice, announcement), register it once before the steps:
+      await page.addLocatorHandler(locator, async () => { /* dismiss it */ }).`,
 };
 
 async function loadData() {
@@ -79,10 +79,6 @@ await expect(page.getByRole('heading', { level: 1 })).toBeVisible();   // surviv
 await expect(banner).toBeVisible();                                   // assert the state
 await banner.getByRole('button', { name: 'Dismiss announcement' }).click();
 await expect(banner).toBeHidden();                                    // then act on it`,
-  '07-loophole': `// pages/chat.page.ts — the only file allowed to hold page
-this.sendButton = page.getByRole('button', { name: 'Send message' });
-// spec
-await chat.send('Laundered selector');`,
 };
 
 function buildSegments(data) {
@@ -98,8 +94,10 @@ function buildSegments(data) {
     node.querySelector('.flake').textContent = seg.flake;
     node.querySelector('.cause').textContent = seg.cause ?? '';
     node.querySelector('.fix').textContent = seg.fix ?? '';
-    node.querySelector('.lint-out code').textContent = LINT_OUT[seg.id] ?? '';
-    node.querySelector('.needed-out code').textContent = NEEDED[seg.id] ?? '';
+    // A rule with no hook output listed drops the "what the agent saw" block under its videos.
+    if (!LINT_OUT[seg.id]) node.querySelector('.agent-saw').remove();
+    else node.querySelector('.lint-out code').textContent = LINT_OUT[seg.id];
+    node.querySelector('.needed-out code')?.replaceChildren(NEEDED[seg.id] ?? '');
 
     for (const [proj, cls] of [['baseline', 'base'], ['linted', 'lint']]) {
       const side = node.querySelector(`.side-${cls}`);
@@ -124,6 +122,9 @@ function buildSegments(data) {
         vid.addEventListener('ended', () => side.classList.add('ended'));
       }
     }
+    // A rule can replace its intro slide: <template id="intro-<seg.id>">.
+    const intro = document.getElementById(`intro-${seg.id}`);
+    if (intro) node.querySelector('section > section').replaceWith(intro.content.cloneNode(true));
     // A rule can swap its video pair for a bespoke slide: <template id="alt-<seg.id>">.
     const alt = document.getElementById(`alt-${seg.id}`);
     if (alt) node.querySelector('.video-slide').replaceWith(alt.content.cloneNode(true));
@@ -133,25 +134,76 @@ function buildSegments(data) {
     if (after) built.push(after.content.cloneNode(true));
   });
   mount.replaceWith(...built);
-  document.querySelectorAll('#repeats-inline, #repeats-total').forEach(el => (el.textContent = data.repeats || 'N'));
 }
 
-function buildResults(data) {
-  const grid = document.getElementById('results-grid');
-  grid.innerHTML = '';
-  for (const seg of data.segments) {
-    const b = seg.baseline?.passRate ?? 0;
-    const l = seg.linted?.passRate ?? 0;
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.innerHTML = `
-      <div class="name">${seg.rule}</div>
-      <div class="bar bar-base"><i style="width:${b}%"></i></div>
-      <div class="bar bar-lint"><i style="width:${l}%"></i></div>
-      <div class="pct"><span class="b">${seg.baseline?.passRate ?? '—'}%</span><span class="l">${seg.linted?.passRate ?? '—'}%</span></div>`;
-    grid.appendChild(cell);
-  }
+/* ---- rule 5: a playhead on the timeline replays the bubble in the screenshot ---- */
+// What the assistant bubble holds up to each point on the timeline (fraction of its width); matches the bands.
+const STREAM = [[0.18, '· · ·'], [0.24, 'echo-me-7f3a'], [0.32, 'e'], [0.40, 'echo'], [0.55, 'echo-me-'], [0.70, 'echo-me-7f'], [Infinity, 'echo-me-7f3a']];
+let streamRaf = 0;
+function playStream(slide) {
+  cancelAnimationFrame(streamRaf);
+  const stream = slide?.querySelector('.stream');
+  if (!stream) return;
+  const track = stream.querySelector('.track');
+  const head = stream.querySelector('.playhead');
+  const shot = slide.querySelector('.target-shot');
+  const bubble = shot.querySelector('.live-bubble span');
+  const readout = slide.querySelector('.readout code');
+  const lanes = [...stream.querySelectorAll('.track')].filter(el => !el.classList.contains('fragment') || el.classList.contains('visible'));
+  const last = lanes[lanes.length - 1];
+  head.style.top = `${track.offsetTop}px`;
+  head.style.height = `${last.offsetTop + last.offsetHeight - track.offsetTop}px`;
+  // Reveal renumbers fragments from 0: 0 is the one-shot read (stops where it lands), 2+ is toContainText
+  // (stops at its first passing poll). Before and between them, the timeline loops.
+  const f = Reveal.getIndices().f ?? -1;
+  const [stopAt, ms] = f === 0 ? [0.41, 2400] : f >= 2 ? [0.2, 1400] : [null, 6000];
+  const start = performance.now();
+  const frame = now => {
+    const p = (now - start) / ms;
+    const t = stopAt === null ? p % 1 : Math.min(p, 1) * stopAt;
+    const text = STREAM.find(([end]) => t < end)[1];
+    const done = stopAt !== null && p >= 1;
+    head.style.left = `${track.offsetLeft + t * track.offsetWidth}px`;
+    bubble.textContent = text;
+    readout.textContent = `"${text}"`;
+    shot.classList.toggle('holds', text.includes('echo-me-7f3a'));
+    shot.classList.toggle('snap', done);
+    if (!done) streamRaf = requestAnimationFrame(frame);
+  };
+  streamRaf = requestAnimationFrame(frame);
 }
+
+/* ---- rule 6: one isVisible() check, two runs; the playhead drives the banner in the screenshot ---- */
+// Both runs check at CHECK. What differs is when the banner mounts (the overlay seam's 200–1200 ms).
+const CHECK = 0.4, DISMISS = 0.47;
+const RUNS = [{ banner: 0.25 }, { banner: 0.6 }];
+let branchRaf = 0;
+function playBranch(slide) {
+  cancelAnimationFrame(branchRaf);
+  const tracks = slide?.querySelectorAll('.branch .track');
+  if (!tracks?.length) return;
+  // Before any fragment: run A. Fragment 0: run B. Later fragments hold run B's end state.
+  const f = Reveal.getIndices().f ?? -1;
+  const run = f >= 0 ? 1 : 0;
+  const track = tracks[run];
+  const head = slide.querySelector('.branch .playhead');
+  const shot = slide.querySelector('.branch-shot');
+  const saw = RUNS[run].banner <= CHECK;
+  head.style.top = `${track.offsetTop}px`;
+  head.style.height = `${track.offsetHeight}px`;
+  const ms = 4000;
+  const start = performance.now() - (f >= 1 ? ms : 0);
+  const frame = now => {
+    const t = Math.min((now - start) / ms, 1);
+    head.style.left = `${track.offsetLeft + t * track.offsetWidth}px`;
+    shot.classList.toggle('banner-up', t >= RUNS[run].banner && !(saw && t >= DISMISS));
+    shot.dataset.check = t < CHECK ? '' : String(saw);
+    shot.dataset.end = t < 1 ? '' : saw ? 'pass' : 'fail';
+    if (t < 1) branchRaf = requestAnimationFrame(frame);
+  };
+  branchRaf = requestAnimationFrame(frame);
+}
+const animateSlide = slide => { playStream(slide); playBranch(slide); };
 
 /* ---- synced playback ---- */
 function pairOn(slide) {
@@ -169,7 +221,6 @@ function togglePair(vids) {
 (async () => {
   const data = await loadData();
   buildSegments(data);
-  buildResults(data);
 
   Reveal.initialize({
     hash: true,
@@ -186,7 +237,11 @@ function togglePair(vids) {
     },
   });
 
+  Reveal.on('ready', e => animateSlide(e.currentSlide));
+  Reveal.on('fragmentshown', () => animateSlide(Reveal.getCurrentSlide()));
+  Reveal.on('fragmenthidden', () => animateSlide(Reveal.getCurrentSlide()));
   Reveal.on('slidechanged', e => {
+    animateSlide(e.currentSlide);
     pairOn(e.previousSlide).forEach(v => v.pause());
     const vids = pairOn(e.currentSlide);
     if (vids.length) setTimeout(() => playPair(vids), 350);

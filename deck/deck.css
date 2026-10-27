@@ -55,17 +55,6 @@
 .reveal pre.lint-out code { line-height: 1.4; text-align: left; white-space: pre-wrap; padding: 10px 14px; max-height: none; }
 .compare { max-width: 1250px; margin: 0 auto; }
 .controls-hint { margin-top: 0.15em; }
-
-/* ---- results grid ---- */
-.results-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.6em; font-size: 0.45em; }
-.results-grid .cell { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 0.6em 0.4em; }
-.results-grid .cell .name { color: var(--muted); font-family: ui-monospace, monospace; margin-bottom: 0.4em; min-height: 2.4em; }
-.results-grid .bar { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; margin: 0.25em 0; }
-.results-grid .bar > i { display: block; height: 100%; }
-.results-grid .bar-base > i { background: var(--base); }
-.results-grid .bar-lint > i { background: var(--lint); }
-.results-grid .pct { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; font-weight: 700; }
-.results-grid .pct .b { color: var(--base); } .results-grid .pct .l { color: var(--lint); }
 .reveal .byline .avatar { width: 2.2em; height: 2.2em; border-radius: 50%; vertical-align: middle; margin-right: 0.4em; }
 
 /* ---- ThinkSys theme ---- */
@@ -190,3 +179,182 @@
 .stage:has(.mock-banner.visible) .mock-send .spinner { display: none; }
 .stage:has(.mock-banner.visible) .mock-send .label { font-size: inherit; }
 .stage:has(.mock-banner.visible) .mock-send .label::before, .stage:has(.mock-banner.visible) .mock-send .label::after { content: none; }
+
+/* ---- one-shot read vs. streaming text (rule 5) ---- */
+.stream { display: grid; grid-template-columns: 15em 1fr; gap: 0.5em 0.8em; align-items: center; margin: 0.6em 0; font-size: 0.55em; text-align: left; }
+.stream .lane-label { color: var(--muted); }
+.stream .lane-label { margin-bottom: 1.6em; } .stream .lane-label:first-child { margin-bottom: 0; }
+.stream .lane-label code { color: #fff; font-size: 0.8em; white-space: nowrap; }
+.stream .track { position: relative; display: flex; height: 3.2em; border-radius: 8px; overflow: visible; }
+.stream .band { display: flex; flex-direction: column; justify-content: center; padding: 0 0.5em; min-width: 0; border-right: 2px solid var(--ts-navy); }
+.stream .band code { font-size: 0.8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; background: none; }
+.stream .band span { font-size: 0.7em; color: rgba(255,255,255,0.75); }
+.stream .band.bad { background: color-mix(in srgb, var(--base) 35%, transparent); }
+.stream .band.good { background: color-mix(in srgb, var(--lint) 40%, transparent); }
+.stream .lane { background: rgba(255,255,255,0.05); height: 2.6em; margin-bottom: 1.6em; }
+.stream .read { position: absolute; top: 50%; width: 0.9em; height: 0.9em; margin: -0.45em 0 0 -0.45em; border-radius: 50%; }
+.stream .read.one { width: 1.3em; height: 1.3em; margin: -0.65em 0 0 -0.65em; box-shadow: 0 0 0 4px rgba(255,255,255,0.25); }
+.stream .read.bad { background: var(--base); } .stream .read.good { background: var(--lint); }
+.stream .read-label { position: absolute; top: 100%; margin-top: 0.2em; transform: translateX(-50%); white-space: nowrap; font-size: 0.8em; color: var(--base); font-weight: 600; }
+.stream .read-label.good-label { color: var(--lint); transform: none; margin-left: -0.5em; }
+.stream .tick { position: absolute; top: 20%; bottom: 20%; width: 3px; margin-left: -1.5px; background: var(--base); opacity: 0.8; }
+.stream .tick.good { background: var(--lint); opacity: 1; width: 5px; }
+.stream .tick.stop::after { content: '✔'; position: absolute; left: 8px; top: -0.2em; color: var(--lint); font-weight: 700; }
+.stream .tally { grid-column: 2; margin: -1.2em 0 0.6em; font-size: 0.9em; }
+.stream .tally .b { color: var(--base); }
+.target { display: flex; align-items: center; gap: 1em; margin: 0.2em 0 0; text-align: left; }
+.target-shot { position: relative; margin: 0; flex: 0 0 600px; }
+.target-shot img { display: block; width: 100%; margin: 0; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); }
+/* the assistant bubble in rule5-reply.png (680x270) */
+.target-box { position: absolute; left: 3%; top: 61%; width: 47%; height: 20%; border: 3px solid var(--lint); border-radius: 10px; }
+
+/* ---- same locator, two environments (rule 3) ---- */
+.nth-code { width: auto; font-size: 0.5em; margin: 0.3em auto; }
+.sidebars { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5em; margin: 0.5em 0; font-size: 0.65em; text-align: left; }
+.sidebar { margin: 0; background: #0f1117; border: 1px solid rgba(255,255,255,0.12); border-top: 8px solid; border-radius: 12px; padding: 0.7em 0.9em; }
+.sidebar.env-ok { border-top-color: var(--lint); } .sidebar.env-bad { border-top-color: var(--base); }
+.sidebar figcaption { font-family: Oswald, sans-serif; text-transform: uppercase; font-size: 1.6em; font-weight: 600; margin-bottom: 0.3em; }
+.sidebar.env-ok figcaption { color: var(--lint); } .sidebar.env-bad figcaption { color: var(--base); }
+.sidebar figcaption span { display: block; font-family: Poppins, sans-serif; text-transform: none; font-weight: 400; font-size: 0.5em; color: var(--muted); }
+.sidebar .sb-head { font-size: 0.65em; letter-spacing: 0.08em; text-transform: uppercase; color: #8b90a0; margin-bottom: 0.3em; }
+.reveal .sidebar ol { display: block; list-style: none; margin: 0; padding: 0; }
+.sidebar li { position: relative; display: grid; grid-template-columns: 3.4em 1.6em 1fr auto auto; align-items: center; gap: 0.5em; padding: 0.4em 0.6em; margin: 0.15em 0; border-radius: 8px; color: #cfd3dc; border: 3px solid transparent; }
+.sidebar li b { font-family: ui-monospace, monospace; font-size: 0.75em; font-weight: 400; color: #8b90a0; }
+.sidebar li i { width: 1.6em; height: 1.6em; border-radius: 50%; background: #2a2e3a; color: #9aa0b0; font-style: normal; font-size: 0.8em; display: grid; place-items: center; }
+.sidebar li small { color: #9aa0b0; font-size: 0.75em; }
+.sidebar li.other { opacity: 0.3; }
+/* the row nth(1) clicks: solid green where it is the draft, solid red where it is not */
+.sidebar li.slot1 { color: #fff; font-weight: 700; }
+.sidebar li.slot1 b { color: #fff; font-weight: 700; }
+.sidebar.env-ok li.slot1 { background: var(--lint); border-color: var(--lint); }
+.sidebar.env-bad li.slot1 { background: var(--base); border-color: var(--base); }
+.sidebar li.slot1::after { content: '◀ clicked'; font-family: ui-monospace, monospace; font-size: 0.75em; white-space: nowrap; color: #fff; }
+.sidebar li.slot1 small { color: rgba(255,255,255,0.85); }
+.sidebar.env-bad li.target { border: 3px dashed var(--lint); color: #fff; font-weight: 600; }
+.sidebar.env-bad li.target small { color: var(--lint); font-weight: 700; }
+.sidebar .verdict { margin: 0.6em 0 0; font-weight: 700; font-size: 1.1em; }
+.sidebar .verdict.good { color: var(--lint); } .sidebar .verdict.bad { color: var(--base); }
+
+/* ---- green today, red later: a test's run history (problem slide) ---- */
+.flake-timeline { position: relative; display: grid; grid-template-columns: repeat(9, 1fr); align-items: start; margin: 0.6em 0 0.2em; font-size: 0.6em; }
+.flake-timeline .tl-track { position: absolute; left: 5.5%; right: 5.5%; top: 1.2em; height: 4px; background: rgba(255,255,255,0.12); border-radius: 2px; }
+.flake-timeline .tl-fill { position: absolute; inset: 0; transform-origin: left; transform: scaleX(0); border-radius: 2px;
+  background: linear-gradient(90deg, var(--lint) 0 25%, rgba(255,255,255,0.3) 25% 50%, var(--base) 50%); }
+.flake-timeline .tl-node, .flake-timeline .tl-gap { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.3em; opacity: 0; }
+.flake-timeline .tl-node b { width: 2.4em; height: 2.4em; border-radius: 50%; display: grid; place-items: center; font-size: 1em; color: #fff; background: var(--ts-navy); border: 3px solid; }
+.flake-timeline .tl-node.write b { border-color: var(--ts-sky); color: var(--ts-sky); }
+.flake-timeline .tl-node.pass b { border-color: var(--lint); background: var(--lint); }
+.flake-timeline .tl-node.fail b { border-color: var(--base); background: var(--base); }
+.flake-timeline .tl-node span { font-weight: 600; text-align: center; line-height: 1.2; }
+.flake-timeline .tl-node small { color: var(--muted); }
+.flake-timeline .tl-gap { padding-top: 0.6em; color: var(--muted); font-style: italic; white-space: nowrap; }
+/* plays once the fragment is shown: the track fills left to right, each run lands in turn */
+.flake-timeline.visible .tl-fill { animation: tl-fill 4.2s linear 0.2s both; }
+.flake-timeline.visible .tl-node, .flake-timeline.visible .tl-gap { animation: tl-pop 0.35s ease-out both; animation-delay: calc(0.2s + var(--i) * 0.5s); }
+.flake-timeline.visible .tl-gap { animation-duration: 0.8s; }
+.tl-caption.visible { transition-delay: 4.6s; }
+@keyframes tl-fill { to { transform: scaleX(1); } }
+@keyframes tl-pop { from { opacity: 0; transform: translateY(0.6em) scale(0.6); } to { opacity: 1; transform: none; } }
+
+/* ---- the app in the videos ---- */
+.app-tour { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1em; align-items: center; text-align: left; }
+.app-shot { position: relative; margin: 0; }
+.app-shot img { display: block; width: 100%; margin: 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); }
+.app-shot .callout { position: absolute; border: 3px solid var(--ts-orange); border-radius: 8px; }
+.app-shot .callout b, .app-legend b { display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--ts-orange); color: var(--ts-navy-deep); font-size: 0.55em; font-weight: 700; }
+.app-shot .callout b { position: absolute; right: -0.75em; top: -0.75em; }
+.reveal .app-legend { display: block; list-style: none; margin: 0 0 0.5em; padding: 0; font-size: 0.6em; }
+.app-legend li { display: flex; align-items: center; gap: 0.5em; margin: 0.25em 0; }
+.app-legend b { font-size: 0.9em; flex: none; }
+.app-tour ul { font-size: 0.5em; }
+.app-legend code { white-space: nowrap; }
+
+/* ---- same app, new CSS (rule 4) ---- */
+.restyle { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; text-align: left; }
+.restyle .layout { margin: 0; }
+.restyle figcaption { font-weight: 700; font-size: 0.55em; margin-bottom: 0.3em; color: var(--ts-sky); }
+.restyle figcaption span { color: var(--muted); font-weight: 400; }
+.restyle img, .mock-b { display: block; width: 100%; aspect-ratio: 16 / 9; margin: 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); }
+.restyle .dom { width: 100%; margin: 0.3em 0 0; font-size: 0.36em; box-shadow: none; }
+.restyle .dom code { padding: 0.5em 0.8em; }
+/* a deliberately different design: light, top bar, composer on top, send on the left */
+.mock-b { background: #f6f3ee; color: #222; font-family: Georgia, serif; overflow: hidden; display: flex; flex-direction: column; font-size: 0.4em; }
+.mock-b header { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 1.2em; background: #fff; border-bottom: 1px solid #e3ddd3; }
+.mock-b .logo { font-style: italic; font-weight: 700; color: #b4462b; }
+.mock-b h1 { margin: 0; font-size: 1.3em; color: #222; text-transform: none; font-family: Georgia, serif; letter-spacing: 0; }
+.mock-b .nav { color: #888; font-size: 0.85em; }
+.mock-b .pill { display: flex; align-items: center; gap: 0.8em; margin: 1.2em auto 0.6em; width: 70%; padding: 0.5em 0.6em; background: #fff; border: 2px solid #b4462b; border-radius: 999px; color: #999; }
+.mock-b .pill button { width: 2.2em; height: 2.2em; border-radius: 50%; border: 0; background: #b4462b; color: #fff; font-size: 1em; }
+.mock-b .cards { display: grid; gap: 0.6em; padding: 0 15%; }
+.mock-b .cards p { margin: 0; padding: 0.7em 1em; background: #fff; border-left: 4px solid #2b7bb4; border-radius: 4px; font-size: 1em; text-align: left; }
+.mock-b .cards p.me { border-left-color: #b4462b; text-align: right; }
+.verdicts { margin: 0.4em auto 0.2em; font-size: 0.45em; border-collapse: collapse; }
+.verdicts th, .verdicts td { padding: 0.25em 0.8em; border: 0; }
+.verdicts th { color: var(--muted); font-weight: 400; }
+.verdicts tr.raw code { color: #f2b8ba; }
+.verdicts td.ok { color: var(--lint); font-weight: 700; text-align: center; }
+.verdicts td.bad { color: var(--base); font-weight: 700; text-align: center; white-space: nowrap; }
+
+/* ---- rule 5: the playhead and the live bubble it drives ---- */
+.stream { position: relative; }
+.stream .playhead { position: absolute; z-index: 4; width: 3px; margin-left: -1.5px; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.7); pointer-events: none; }
+.target-shot { container-type: inline-size; }
+/* sits exactly on the assistant bubble in rule5-reply.png (680x270: x 26–331, y 171–214) */
+.live-bubble { position: absolute; left: 3.82%; top: 63.33%; width: 44.85%; height: 15.93%; background: rgb(32, 41, 56); border-radius: 1.5cqw; display: flex; align-items: center; padding-left: 2.06cqw; box-sizing: border-box; color: rgb(204, 214, 224); font-size: 2.1cqw; font-weight: 500; }
+.target-shot .target-box { border-color: var(--base); transition: border-color 0.15s; }
+.target-shot.holds .target-box { border-color: var(--lint); }
+.target-shot.snap .target-box { animation: snap 0.6s ease-out; }
+@keyframes snap { from { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0.85); } to { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
+.readout code { color: var(--base); }
+.stream-slide:has(.target-shot.holds) .readout code { color: var(--lint); }
+
+/* ---- rule 6: one isVisible() check, two runs ---- */
+.branch-top { display: grid; grid-template-columns: 1.15fr 1fr; gap: 1em; align-items: center; text-align: left; }
+.branch-shot { position: relative; margin: 0; overflow: hidden; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); container-type: inline-size; }
+.branch-shot img { display: block; width: 100%; margin: 0; }
+/* the overlay seam's banner: fixed to the bottom of the viewport, 140px of 720 */
+.ann-banner { position: absolute; left: 0; right: 0; bottom: 0; height: 19.4%; display: flex; align-items: center; justify-content: space-between; padding: 0 2.5cqw; background: #1f2937; color: #fff; font-size: 1.4cqw; box-shadow: 0 -0.4cqw 2cqw rgba(0,0,0,0.5); transform: translateY(105%); transition: transform 0.35s ease; }
+.ann-banner b { background: #6D5AE6; border-radius: 0.6cqw; padding: 0.8cqw 1.4cqw; font-weight: 600; }
+.branch-shot.banner-up .ann-banner { transform: none; }
+.send-ring { position: absolute; left: 47%; top: 89.6%; width: 4cqw; height: 4cqw; margin: -2cqw 0 0 -2cqw; border: 0.4cqw solid var(--base); border-radius: 50%; opacity: 0; z-index: 2; }
+.branch-shot[data-end="fail"] .send-ring { opacity: 1; }
+.check-flag, .end-flag { position: absolute; left: 50%; transform: translateX(-50%); padding: 0.6cqw 1.4cqw; border-radius: 0.8cqw; font-family: ui-monospace, monospace; font-size: 1.8cqw; font-weight: 700; white-space: nowrap; opacity: 0; transition: opacity 0.2s; }
+.check-flag { top: 34%; background: #fff; color: #111; }
+.end-flag { top: 52%; color: #fff; }
+.branch-shot[data-check="true"] .check-flag, .branch-shot[data-check="false"] .check-flag, .branch-shot[data-end="pass"] .end-flag, .branch-shot[data-end="fail"] .end-flag { opacity: 1; }
+.branch-shot[data-check="true"] .check-flag::after { content: 'isVisible() → true'; }
+.branch-shot[data-check="false"] .check-flag::after { content: 'isVisible() → false'; }
+.branch-shot[data-end="pass"] .end-flag { background: var(--lint); }
+.branch-shot[data-end="pass"] .end-flag::after { content: '✔ passes'; }
+.branch-shot[data-end="fail"] .end-flag { background: var(--base); }
+.branch-shot[data-end="fail"] .end-flag::after { content: '✖ banner blocks the composer → timeout'; }
+.branch-code { width: 100%; font-size: 0.42em; margin: 0 0 0.4em; }
+.branch { position: relative; display: grid; grid-template-columns: 4em 1fr 6em; gap: 0.3em 0.8em; align-items: center; margin: 0.6em 0 1.2em; font-size: 0.5em; text-align: left; }
+.branch .lane-label { font-weight: 700; }
+.branch .track { position: relative; display: flex; height: 2.4em; border-radius: 8px; margin-bottom: 1.4em; }
+.branch .band { display: flex; align-items: center; padding: 0 0.6em; font-size: 0.8em; color: rgba(255,255,255,0.8); border-right: 2px solid var(--ts-navy); white-space: nowrap; overflow: hidden; }
+.branch .band.none { background: rgba(255,255,255,0.08); }
+.branch .band.up { background: color-mix(in srgb, var(--ts-orange) 45%, transparent); }
+.branch .band.up.bad { background: color-mix(in srgb, var(--base) 45%, transparent); }
+.branch .check { position: absolute; top: -0.3em; bottom: -0.3em; width: 4px; margin-left: -2px; background: #fff; }
+.branch .check span { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 0.2em; font-family: ui-monospace, monospace; font-size: 0.8em; white-space: nowrap; color: #fff; }
+.branch .outcome { font-weight: 700; margin-bottom: 1.4em; white-space: nowrap; }
+.branch .outcome.good { color: var(--lint); } .branch .outcome.bad { color: var(--base); }
+.branch .playhead { position: absolute; z-index: 4; width: 3px; margin-left: -1.5px; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.7); pointer-events: none; }
+.branch-fix { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; text-align: left; }
+.branch-fix p { margin: 0 0 0.2em; }
+.branch-fix pre { width: 100%; font-size: 0.38em; margin: 0; }
+
+/* ---- rule 7: no-restricted-syntax for anything else ---- */
+.nrs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8em; margin: 0.4em 0; text-align: left; }
+.nrs { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 0.5em 0.7em; font-size: 0.58em; }
+.nrs .seen { width: 100%; margin: 0 0 0.4em; font-size: 0.85em; box-shadow: none; }
+.nrs .seen code { border-left: 4px solid var(--base); }
+.nrs .sel { display: block; font-size: 0.75em; color: var(--ts-orange); word-break: break-all; }
+.nrs p { margin: 0.4em 0 0; color: var(--lint); }
+/* The PDF is printed mid-animation; show the finished run history instead. */
+html.print-pdf .flake-timeline .tl-fill { animation: none; transform: none; }
+html.print-pdf .flake-timeline .tl-node, html.print-pdf .flake-timeline .tl-gap { animation: none; opacity: 1; }
+html.print-pdf .tl-caption { transition: none; }
+html.print-pdf .flake-timeline { font-size: 0.48em; margin: 0.3em 0 0; }
+html.print-pdf .tl-caption { margin-top: 0.3em; }

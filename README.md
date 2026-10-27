@@ -125,14 +125,14 @@ file. A new violation is not in it and fails. A fixed one leaves a stale entry t
 prunes. The number only goes down.
 
 `tests/ratchet-demo/` is a frozen copy of the baseline specs with the linted rules applied:
-39 violations in `eslint-suppressions.json`, so the ratchet can be watched working.
+40 violations in `eslint-suppressions.json`, so the ratchet can be watched working.
 
 ### Most of the suppressions are app bugs
 
 `no-raw-locators` firing on `page.locator('#chat-composer-input')` is not a test problem. The
 element has no role, no label, no accessible name; a screen reader cannot find it either.
 The fix is in the app. `ratchet:report` groups the app-side entries by selector so each one
-becomes a ticket: add the label, switch the test to `getByRole('textbox', { name: 'Message' })`,
+becomes one app PR, which QA can open with the same agent: add the label, switch the test to `getByRole('textbox', { name: 'Message' })`,
 run `tighten`, and the number drops by however many specs used that selector.
 
 ## Deck controls

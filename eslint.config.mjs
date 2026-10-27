@@ -32,6 +32,12 @@ const FIX_INSTRUCTIONS = {
   pageInSpec:
     'Specs must not touch `page` directly. Move this call into a page object under tests/linted/pages/ ' +
     'and call its method from the spec. Page objects own locators; specs own intent.',
+  conditionalState:
+    'isVisible() / isHidden() / isEnabled() answer once, right now, without waiting, so an if on ' +
+    'them picks a path by timing. Remove the branch. If the element belongs to this page state, ' +
+    'assert it: await expect(locator).toBeVisible(), then act on it. If it can appear at any ' +
+    'time (cookie notice, announcement), register it once before the steps: ' +
+    'await page.addLocatorHandler(locator, async () => { /* dismiss it */ }).',
   elementHandle:
     'Do not use page.$ / page.$$ / elementHandle(). Keep a Locator and assert with ' +
     'await expect(locator).toContainText(...) so the assertion retries until the UI settles.',
@@ -100,6 +106,11 @@ export default tseslint.config(
         {
           selector: 'CallExpression[callee.property.name=/^\\$\\$?$/]',
           message: FIX_INSTRUCTIONS.elementHandle,
+        },
+        // no-conditional-in-test says "avoid conditionals"; this says why the branch is random and what replaces it.
+        {
+          selector: ':matches(IfStatement, ConditionalExpression) CallExpression[callee.property.name=/^is(Visible|Hidden|Enabled|Disabled|Checked|Editable)$/]',
+          message: FIX_INSTRUCTIONS.conditionalState,
         },
       ],
     },

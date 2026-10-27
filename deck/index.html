@@ -39,7 +39,7 @@
       <ol class="agenda">
         <li><b>The problem</b><span>why agent-written Playwright tests flake, and why review doesn't catch it</span></li>
         <li><b>The mechanism</b><span>an ESLint hook that lands the fix instruction at the moment of the mistake</span></li>
-        <li><b>The evidence</b><span>7 rules, same prompt twice, same injected flake — side by side</span></li>
+        <li><b>The examples</b><span>7 rules: the shortcut the agent took, and the test after the lint hook</span></li>
         <li><b>Rolling it out</b><span>turn every rule on today without fixing anything today</span></li>
       </ol>
       <p class="small muted">We'll pause for questions after rule 2 and at the end — drop them in the Q&amp;A panel as they come.</p>
@@ -56,7 +56,11 @@ await page.locator('button.send').first().click();
 await button.click({ force: true });
 if (await banner.isVisible()) await banner.click();
       </code></pre>
-      <p class="fragment">Green today. Three weeks later it's the flake blocking someone else's PR.</p>
+      <div class="fragment flake-timeline" data-fragment-index="1">
+        <div class="tl-track"><i class="tl-fill"></i></div>
+        <div class="tl-node write" style="--i:0"><b>✎</b><span>Agent writes it</span><small>day 1</small></div><div class="tl-node pass" style="--i:1"><b>✔</b><span>its PR</span><small>day 1</small></div><div class="tl-node pass" style="--i:2"><b>✔</b><span>main</span><small>day 2</small></div><div class="tl-gap" style="--i:3">· · · three weeks · · ·</div><div class="tl-node fail" style="--i:4"><b>✖</b><span>someone else's PR</span><small></small></div><div class="tl-node fail" style="--i:5"><b>✖</b><span>re-run</span><small></small></div><div class="tl-node fail" style="--i:6"><b>✖</b><span>re-run</span><small></small></div><div class="tl-node fail" style="--i:7"><b>✖</b><span>another PR</span><small></small></div><div class="tl-node fail" style="--i:8"><b>✖</b><span>main</span><small></small></div>
+      </div>
+      <p class="fragment tl-caption" data-fragment-index="1">Green today. Three weeks later it's the flake blocking someone else's PR.</p>
     </section>
 
     <section>
@@ -118,33 +122,64 @@ https://github.com/playwright-community/eslint-plugin-playwright/tree/main/docs/
       <p class="small">Same rule. One repairs on the first try. <strong>Where</strong> the verdict lands + <strong>what</strong> it says = the "linted" setup in every demo that follows.</p>
     </section>
 
-    <!-- ============================================================ DEMO SETUP -->
+    <!-- ============================================================ THE APP IN THE VIDEOS -->
     <section>
-      <p class="kicker">Does it work?</p>
-      <h2>The experiment</h2>
-      <ul>
-        <li>App: <a href="https://github.com/theimaginaryfoundation/what-iff">what-iff</a> — Angular + Go, mock-LLM mode</li>
-        <li>Same prompt, twice: <span class="tag tag-base">baseline</span> no Playwright lint rules · <span class="tag tag-lint">linted</span> rules + hook</li>
-        <li>Then: inject the conditions that make tests flake, run each <span id="repeats-inline">N</span>×</li>
-      </ul>
-      <pre><code class="language-ts" data-trim>
-// tests/support/flake.ts — injected from the test side, app untouched
-slowApi      API replies 300–2500 ms late
-overlay      banner mounts late, covers the composer
-duplicates   decoy "send" control appears
-renameCss    BEM classes rewritten, ids renamed
-streamText   reply body arrives in chunks
-      </code></pre>
+      <p class="kicker">The app in the videos</p>
+      <h2>Meet what-iff</h2>
+      <div class="app-tour">
+        <figure class="app-shot">
+          <img src="what-iff-chat.jpg" alt="what-iff chat screen: sidebar with Recent threads, a thread with the sent message and the assistant's echo, and the composer" />
+          <i class="callout" style="left: 0%; top: 41%; width: 23.4%; height: 9.5%"><b>1</b></i>
+          <i class="callout" style="left: 24.2%; top: 0%; width: 50%; height: 9%"><b>2</b></i>
+          <i class="callout" style="left: 24.2%; top: 10.5%; width: 48.5%; height: 20.5%"><b>3</b></i>
+          <i class="callout" style="left: 24.6%; top: 86.4%; width: 46.4%; height: 12.6%"><b>4</b></i>
+        </figure>
+        <div>
+          <ol class="app-legend">
+            <li><b>1</b>Recent threads</li>
+            <li><b>2</b>Thread name in the header</li>
+            <li><b>3</b>Your message, and the assistant's reply</li>
+            <li><b>4</b>Composer: <code>Message</code> box, <code>Send message</code> button</li>
+          </ol>
+          <ul class="small">
+            <li>Open-source AI chat app: Angular front end, Go API</li>
+            <li>Mock-LLM mode: the assistant echoes what you send, so replies are predictable</li>
+            <li>Each video: fresh account, seeded chat, type, send, check the reply</li>
+            <li>Each runs under one injected <em>flake seam</em> (a slow API, a late banner, renamed CSS), named on the rule's first slide</li>
+            <li><span class="tag tag-base">left</span> the agent's first draft · <span class="tag tag-lint">right</span> after the lint hook</li>
+          </ul>
+        </div>
+      </div>
+      <aside class="notes">This is what you'll see in every video. what-iff is an open-source chat app, Angular and Go, running with a mock model that echoes what you type, so the assistant's reply is predictable. Every test signs up a fresh account, opens a seeded chat, types in the composer, sends, and checks the reply. Left side is the agent's first draft; right side is after the lint hook. Each one runs with one thing that makes tests flake — a slow API, a banner — and the rule slide names it.</aside>
     </section>
 
     <!-- ============================================================ SEGMENTS (generated) -->
     <div id="segments"></div>
 
-    <!-- ============================================================ RESULTS -->
+    <!-- ============================================================ APP CHANGES -->
     <section>
-      <p class="kicker">The evidence, in numbers</p>
-      <h2>Results: <span id="repeats-total">N</span> runs per spec, same flake</h2>
-      <div id="results-grid" class="results-grid"></div>
+      <p class="kicker">Before the rollout</p>
+      <h2>Unfortunately, 80% of bad tests need an app change</h2>
+      <div class="two-col">
+        <div>
+          <h3>The ratchet report's app-side list</h3>
+          <ul class="small">
+            <li><code>#chat-composer-input</code> (5 uses) → the box has no name: <code>&lt;label&gt;Message&lt;/label&gt;</code></li>
+            <li><code>button.composer__send</code> → the icon button has no name: <code>aria-label="Send message"</code></li>
+            <li><code>#demo-announce</code> → the banner is a <code>div</code>: <code>role="dialog"</code> + a name</li>
+            <li>No name for the test is no name for a screen reader: the suppressions file is your a11y backlog</li>
+          </ul>
+        </div>
+        <div class="fragment">
+          <h3>QA can make that change now</h3>
+          <ul class="small">
+            <li>A coding harness opens the app repo as easily as the test repo</li>
+            <li>The lint message already names the fix</li>
+            <li>The agent makes it in the app; dev reviews a small PR instead of triaging a ticket</li>
+          </ul>
+        </div>
+      </div>
+      <aside class="notes">Here's the uncomfortable part before we talk rollout: most of these violations can't be fixed in the test. The ratchet report sorts them: 13 of the 21 frozen lines are raw locators on elements with no accessible name. The test reached for CSS because the box has no label and the button has no name, and a screen reader has the same problem. Those are app changes. The good news is that the same harness that wrote the test can make them. Claude Code or Cursor opens the app repo just as easily, the lint message already says what to add, and dev gets a two-line PR to review instead of a ticket to triage.</aside>
     </section>
 
     <!-- ============================================================ RATCHET -->
@@ -170,11 +205,11 @@ git add eslint-suppressions.json     # commit the debt, with a number on it
         <h2>Live: the ratchet on this repo's baseline</h2>
         <pre><code class="language-bash" data-trim>
 $ npm run ratchet:init
-✔ froze 39 existing violations in eslint-suppressions.json. Commit it. New violations now fail.
+✔ froze 40 existing violations in eslint-suppressions.json. Commit it. New violations now fail.
 
 $ sed -i 's/click({ force: true })/click()/' tests/02-force-click.spec.ts   # someone fixes one
 $ npm run ratchet:tighten
-✔ pruned stale suppressions. The number only goes down.           # 39 → 38
+✔ pruned stale suppressions. The number only goes down.           # 40 → 39
 
 $ echo "await page.waitForTimeout(500);" >> tests/03-nth-first.spec.ts    # agent adds one
 $ npm run ratchet:tighten
@@ -184,35 +219,11 @@ $ npm run ratchet:tighten
       </section>
 
       <section>
-        <h2>80% of the time, the <em>app</em> has to change</h2>
-        <p class="lead">The agent used <code>page.locator('#chat-composer-input')</code> because nothing better existed.</p>
-        <div class="two-col">
-          <div>
-            <h3>What <code>no-raw-locators</code> is really saying</h3>
-            <ul>
-              <li>This element has no role, no name, no label</li>
-              <li>A screen reader can't find it either</li>
-              <li>The fix is an <code>aria-label</code> or a <code>&lt;label&gt;</code> — in the app</li>
-            </ul>
-          </div>
-          <div>
-            <h3>So the suppressions file is…</h3>
-            <ul>
-              <li>…your a11y backlog, with line numbers</li>
-              <li>…owned jointly by QA and the dev team</li>
-              <li>…one ticket per <em>selector</em>, not per violation</li>
-            </ul>
-          </div>
-        </div>
-        <aside class="notes">This is the part people don't expect. The lint rule is a testability rule, and testability is accessibility. You will not fix this alone, and the ratchet is how you make it a shared, visible, shrinking number instead of an argument.</aside>
-      </section>
-
-      <section>
         <h2>The workflow with your dev team</h2>
         <pre><code class="language-text" data-trim>
 $ npm run ratchet:report
 
-39 frozen violations on 21 lines
+40 frozen violations on 21 lines
 
 TEST-SIDE (8) — fix in the spec, no app change. Hand these to the agent.
   tests/01-hard-wait.spec.ts:13   playwright/no-wait-for-timeout
@@ -220,7 +231,7 @@ TEST-SIDE (8) — fix in the spec, no app change. Hand these to the agent.
   tests/06-conditional.spec.ts:16 playwright/no-conditional-in-test
   …
 
-APP-SIDE (13 uses of 9 selectors) — element has no accessible name. One ticket per selector.
+APP-SIDE (13 uses of 9 selectors) — element has no accessible name. One app PR per selector.
     5×  #chat-composer-input                       → &lt;label for="chat-composer-input"&gt;Message&lt;/label&gt;
     1×  button.composer__send                      → aria-label="Send message"
     1×  .chat-page__thread-name-trigger h1         → it's already an h1: getByRole('heading')
@@ -228,7 +239,7 @@ APP-SIDE (13 uses of 9 selectors) — element has no accessible name. One ticket
         </code></pre>
         <ol class="small">
           <li><strong>Test-side</strong> → the agent, with the hook on. Done in an afternoon.</li>
-          <li><strong>App-side</strong> → one ticket per selector to the dev team. Each fix: add the name, delete the raw locator, <code>ratchet:tighten</code>.</li>
+          <li><strong>App-side</strong> → QA, with the agent, in the app repo: one small PR per selector. Add the name, delete the raw locator, <code>ratchet:tighten</code>. Dev reviews.</li>
           <li>Suppressions file shrinks in every PR. Nobody argues about "turning on lint". It's already on.</li>
         </ol>
       </section>
@@ -323,8 +334,9 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
       <div>
         <h3>Next</h3>
         <ul>
-          <li>Locators: <code>.first()</code>, raw CSS, the laundering loophole</li>
+          <li>Locators: <code>nth()</code> and raw CSS</li>
           <li>Assertions and conditionals</li>
+          <li><code>no-restricted-syntax</code> for anything else</li>
           <li>Rolling it out without boiling the ocean</li>
         </ul>
       </div>
@@ -365,15 +377,218 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
     <div class="two-col lifecycle-outcomes">
       <div class="fragment" data-fragment-index="6">
         <h3><code>click()</code></h3>
-        <p class="small"><strong>Retries</strong> the checks until the banner is gone or the timeout hits. The failure names the cause: <em>“&lt;div role=dialog&gt; intercepts pointer events”</em>.</p>
+        <p class="small">Waits for Attached, then <strong>retries</strong> Visible, Enabled and Stable (one check) and the hit test until the banner is gone or the timeout hits. The failure names the cause: <em>“&lt;div role=dialog&gt; intercepts pointer events”</em>.</p>
       </div>
       <div class="fragment" data-fragment-index="7">
         <h3><code>click({ force: true })</code></h3>
-        <p class="small"><strong>Skips</strong> Visible, Stable, Receives events, Enabled — dispatches at the coordinates anyway. The banner gets the click; the test fails three steps later on an unrelated assertion.</p>
+        <p class="small">Still waits for Attached. Then <strong>skips</strong> the waits, the hit test and any <code>addLocatorHandler</code>. Not visible at that instant? Fails at once, no retry. Otherwise it clicks the coordinates: the banner gets the click, and the test fails later on an unrelated assertion.</p>
       </div>
     </div>
-    <p class="small muted fragment" data-fragment-index="7">Linted fix: <code>getByRole('button', { name: 'Dismiss announcement' }).click()</code> first — then the real click passes every check.</p>
-    <aside class="notes">Walk the pipeline. force:true is not "click harder"; it is "stop checking". Every check it skips is a reason the test would have told you what went wrong.</aside>
+    <p class="small muted fragment" data-fragment-index="7">The timeout starts when <code>click()</code> is called, not when the element attaches: waiting for it counts, force or not.<br/>Linted fix: <code>getByRole('button', { name: 'Dismiss announcement' }).click()</code> first — then the real click passes every check.</p>
+    <aside class="notes">Walk the pipeline. Visible, enabled and stable are one check that Playwright retries with a short backoff, then it hit-tests the click point. force:true is not "click harder"; it is "stop checking": it still waits for the element to attach, then skips the waits, the hit test and any locator handler you registered, and if the element isn't visible at that instant it throws straight away. The timeout clock started when click() was called, so time spent waiting to attach counts either way. Every check force skips is a reason the test would have told you what went wrong.</aside>
+  </section>
+</template>
+
+<!-- Rule 7: no-restricted-syntax for patterns no plugin rule covers; replaces the rule 7 intro (swapped in by deck.js). -->
+<template id="intro-07-loophole">
+  <section class="nrs-slide">
+    <p class="kicker">Rule 7 / 7</p>
+    <h3><code>no-restricted-syntax</code>: for anything else</h3>
+    <p class="small">Saw it twice in review? It's one AST selector and a message that says what to do instead.</p>
+    <div class="nrs-grid">
+      <div class="nrs">
+        <pre class="seen"><code class="language-ts" data-trim>test.setTimeout(120_000);</code></pre>
+        <code class="sel">CallExpression[callee.object.name="test"][callee.property.name=/^(setTimeout|slow)$/]</code>
+        <p>→ Don't raise the timeout to get a slow step through. Assert the state you're waiting for; if the app is slow, that's the bug.</p>
+      </div>
+      <div class="nrs">
+        <pre class="seen"><code class="language-ts" data-trim>test.describe.configure({ retries: 3 });</code></pre>
+        <code class="sel">CallExpression[callee.property.name="configure"] Property[key.name="retries"]</code>
+        <p>→ Retries belong in playwright.config.ts, for CI. In a spec they hide the flake you're writing.</p>
+      </div>
+      <div class="nrs">
+        <pre class="seen"><code class="language-ts" data-trim>await page.goto('http://localhost:4200/chat');</code></pre>
+        <code class="sel">Literal[value=/^https?:\/\/(localhost|127\.0\.0\.1)/]</code>
+        <p>→ Use page.goto('/chat'). baseURL comes from the config, so the test runs on every environment.</p>
+      </div>
+      <div class="nrs">
+        <pre class="seen"><code class="language-ts" data-trim>const name = `user-${Math.random()}`;</code></pre>
+        <code class="sel">CallExpression[callee.object.name="Math"][callee.property.name="random"]</code>
+        <p>→ Derive test data from the seeded fixture, so a failure reproduces on the next run.</p>
+      </div>
+    </div>
+    <p class="small muted">Write selectors in the <a href="https://typescript-eslint.io/play">typescript-eslint playground</a>. When one needs an allow-list or has to know which file it's in, graduate it to a custom rule.</p>
+    <aside class="notes">The plugin covers the Playwright API. Everything specific to your team — a timeout bump, retries in a spec, a hard-coded host, unseeded data — is one no-restricted-syntax entry: an AST selector for the pattern and a message written as the fix. Each of these selectors runs as written. When the selector can't express the rule — it needs an allow-list, or it depends on which file it's in — that's when you graduate it to a custom rule, like no-page-in-spec in this repo.</aside>
+  </section>
+</template>
+
+<!-- Rule 7: no video pair; an empty alt template removes it. -->
+<template id="alt-07-loophole"></template>
+
+<!-- Rule 6: one isVisible() check picks a branch by timing; the playhead drives the banner in the screenshot (replaces the video pair). -->
+<template id="alt-06-conditional">
+  <section class="branch-slide">
+    <h3>Two tests in one. The green check doesn't say which ran.</h3>
+    <div class="branch-top">
+      <figure class="branch-shot">
+        <img src="what-iff-chat.jpg" alt="what-iff chat screen" />
+        <div class="ann-banner"><span>🎉 New: scheduled agents are live. Read the release notes.</span><b>Got it</b></div>
+        <i class="send-ring"></i>
+        <span class="check-flag"></span>
+        <span class="end-flag"></span>
+      </figure>
+      <div>
+        <pre class="branch-code"><code class="language-ts" data-trim>
+const banner = page.locator('#demo-announce');
+if (await banner.isVisible()) {
+  await banner.locator('button').click();
+}
+await page.locator('#chat-composer-input').fill('Banner handled?');
+        </code></pre>
+        <p class="small">The banner mounts 200–1200 ms after load. <code>isVisible()</code> answers once, the moment it runs.</p>
+      </div>
+    </div>
+    <div class="branch">
+      <i class="playhead"></i>
+      <div class="lane-label">Run A</div>
+      <div class="track">
+        <div class="band none" style="flex: 25">no banner</div><div class="band up" style="flex: 22">banner</div><div class="band none" style="flex: 53">dismissed</div>
+        <i class="check" style="left: 40%"><span>isVisible() → true · dismiss</span></i>
+      </div>
+      <div class="outcome good">✔ passes</div>
+
+      <div class="lane-label fragment" data-fragment-index="1">Run B</div>
+      <div class="track fragment" data-fragment-index="1">
+        <div class="band none" style="flex: 60">no banner</div><div class="band up bad" style="flex: 40">banner over the composer</div>
+        <i class="check" style="left: 40%"><span>isVisible() → false · skip</span></i>
+      </div>
+      <div class="outcome bad fragment" data-fragment-index="1">✖ timeout</div>
+    </div>
+    <div class="branch-fix fragment" data-fragment-index="2">
+      <div>
+        <p class="small"><strong>Part of this page?</strong> Assert it, then act.</p>
+        <pre><code class="language-ts" data-trim>
+await expect(banner).toBeVisible();
+await banner.getByRole('button', { name: 'Dismiss announcement' }).click();
+        </code></pre>
+      </div>
+      <div>
+        <p class="small"><strong>Can appear any time?</strong> Hand it to Playwright.</p>
+        <pre><code class="language-ts" data-trim>
+await page.addLocatorHandler(banner, () =>
+  banner.getByRole('button', { name: 'Dismiss announcement' }).click());
+        </code></pre>
+      </div>
+    </div>
+    <aside class="notes">The agent was told "sometimes a banner shows up" and wrapped the dismissal in an if. isVisible doesn't wait; it answers once. Run A: the banner was already there at the check, so the test dismissed it and passed. Run B, same code: the check came first, said false, skipped the dismissal, and then the banner landed on the composer. The fill waits behind it until the timeout. A green check doesn't tell you which path ran. The hook now says that, and offers the two fixes: if the banner belongs to this state, assert it; if it can show up any time, addLocatorHandler dismisses it whenever it appears.</aside>
+  </section>
+</template>
+
+<!-- Rule 3: the same locator against two environments' data (replaces the video pair). -->
+<template id="alt-03-nth-first">
+  <section class="nth-slide">
+    <h3>Unique here. Not everywhere.</h3>
+    <pre class="nth-code"><code class="language-ts" data-trim>await page.getByRole('link', { name: 'New thread' }).nth(1).click();</code></pre>
+    <div class="sidebars">
+      <figure class="sidebar env-ok">
+        <figcaption>Local<span>where the agent generated the test</span></figcaption>
+        <div class="sb-head">Recent threads</div>
+        <ol><li class="other"><b></b><i>B</i>Book club<small></small></li><li class="match "><b>nth(0)</b><i>N</i>New thread<small></small></li><li class="match slot1 target"><b>nth(1)</b><i>N</i>New thread<small>draft</small></li><li class="other"><b></b><i>R</i>Recipes<small></small></li></ol>
+        <p class="verdict good">✔ clicks the draft</p>
+      </figure>
+      <figure class="sidebar env-bad">
+        <figcaption>Staging<span>a different dataset</span></figcaption>
+        <div class="sb-head">Recent threads</div>
+        <ol><li class="match "><b>nth(0)</b><i>N</i>New thread<small></small></li><li class="other"><b></b><i>Q</i>Q3 planning<small></small></li><li class="match slot1 "><b>nth(1)</b><i>N</i>New thread<small></small></li><li class="match target"><b>nth(2)</b><i>N</i>New thread<small>draft · the one you meant</small></li><li class="other"><b></b><i>B</i>Book club<small></small></li><li class="other"><b></b><i>R</i>Recipes<small></small></li></ol>
+        <p class="verdict bad">✖ clicks someone else's thread</p>
+      </figure>
+    </div>
+    <p class="small">The agent's locator was the most unique one <em>on the data it could see</em>. Another environment has other data.</p>
+    <aside class="notes">The agent clicked the thread through Playwright and got the most unique locator available at that moment. Every new thread in what-iff is called "New thread", so the best it could do was "the second one". On local that's the draft. Staging has a different dataset, and the second New thread is somebody else's. The app isn't the same everywhere; an index only describes the one place it was generated.</aside>
+  </section>
+</template>
+
+<!-- Rule 4: the same app before and after a restyle; CSS paths break, role + name survive (replaces the video pair). -->
+<template id="alt-04-raw-locator">
+  <section class="restyle-slide">
+    <h3>Same app. New CSS.</h3>
+    <div class="restyle">
+      <figure class="layout">
+        <figcaption>what-iff today</figcaption>
+        <img src="what-iff-chat.jpg" alt="what-iff today: dark theme, sidebar on the left, composer at the bottom" />
+        <pre class="dom"><code>&lt;form class="composer"&gt;&lt;div&gt;&lt;div&gt;
+  &lt;textarea id="chat-composer-input" aria-label="Message"&gt;
+  &lt;button class="composer__send" aria-label="Send message"&gt;</code></pre>
+      </figure>
+      <figure class="layout fragment" data-fragment-index="1">
+        <figcaption>after a redesign <span>(mock)</span></figcaption>
+        <div class="mock-b">
+          <header><span class="logo">whatiff</span><h1>Demo chat</h1><span class="nav">Chat · People · Gallery</span></header>
+          <div class="pill"><button aria-label="Send message">➤</button><span>Message Demo…</span></div>
+          <div class="cards"><p class="me">echo-me-7f3a</p><p>echo-me-7f3a</p></div>
+        </div>
+        <pre class="dom"><code>&lt;div class="flex gap-2 rounded-full"&gt;
+  &lt;button class="btn-icon" aria-label="Send message"&gt;
+  &lt;textarea class="grow" aria-label="Message"&gt;</code></pre>
+      </figure>
+    </div>
+    <table class="verdicts">
+      <tr><th></th><th>today</th><th class="fragment" data-fragment-index="1">redesign</th></tr>
+      <tr class="raw"><td><code>locator('form.composer textarea#chat-composer-input')</code></td><td class="ok">✔</td><td class="bad fragment" data-fragment-index="2">✖ 0 matches</td></tr>
+      <tr class="raw"><td><code>locator('form.composer &gt; div &gt; div &gt; button.composer__send')</code></td><td class="ok">✔</td><td class="bad fragment" data-fragment-index="2">✖ 0 matches</td></tr>
+      <tr><td><code>getByRole('textbox', { name: 'Message' })</code></td><td class="ok">✔</td><td class="ok fragment" data-fragment-index="2">✔</td></tr>
+      <tr><td><code>getByRole('button', { name: 'Send message' })</code></td><td class="ok">✔</td><td class="ok fragment" data-fragment-index="2">✔</td></tr>
+    </table>
+    <p class="small fragment" data-fragment-index="3">CSS is how it looks; the accessible name is what it <em>is</em>. If the agent reached for raw CSS, ask first whether a name exists — often it doesn't, and that's the app's bug.</p>
+    <aside class="notes">Left is what-iff today. Right is the same app after a restyle — new theme, layout flipped, utility classes instead of BEM. The agent's selectors were copied from today's DOM, so every one of them is a fact about the CSS. The role-and-name locators are facts about what the control is, which is what a screen reader uses too, so they survive. And when the agent couldn't find a name to use, that's usually because there isn't one — no-raw-locators is pointing at an accessibility gap.</aside>
+  </section>
+</template>
+
+<!-- Rule 5: when a one-shot textContent() read lands, against what the bubble holds (replaces the video pair). -->
+<template id="alt-05-web-first">
+  <section class="stream-slide">
+    <h3>One read, at one instant</h3>
+    <div class="target">
+      <figure class="target-shot">
+        <img src="rule5-reply.png" alt="what-iff chat: the sent message and the assistant reply, both reading echo-me-7f3a" />
+        <div class="live-bubble"><span>echo-me-7f3a</span></div>
+        <i class="target-box"></i>
+      </figure>
+      <p class="small">What the test is looking for: the <strong>assistant</strong> bubble contains <code>echo-me-7f3a</code>.<br/><span class="readout">The bubble, at the playhead: <code>"echo-me-7f3a"</code></span></p>
+    </div>
+    <div class="stream">
+      <i class="playhead"></i>
+      <div class="lane-label">assistant bubble</div>
+      <div class="track">
+        <div class="band bad" style="flex: 18"><code>· · ·</code><span>pending</span></div>
+        <div class="band good" style="flex: 6"><code>echo-me-7f3a</code><span>300 ms</span></div>
+        <div class="band bad" style="flex: 46"><code>e → echo → echo-me-</code><span>re-streamed in chunks</span></div>
+        <div class="band good" style="flex: 30"><code>echo-me-7f3a</code><span>settled</span></div>
+      </div>
+
+      <div class="lane-label fragment" data-fragment-index="1"><code>expect(await body.textContent())</code></div>
+      <div class="track lane fragment" data-fragment-index="1">
+        <i class="read bad one fragment fade-out" data-fragment-index="2" style="left: 41%"></i>
+        <div class="read-label fragment fade-out" data-fragment-index="2" style="left: 41%">reads <code>"echo-me-"</code> · <code>toContain</code> fails · no retry</div>
+        <!-- 20 runs; positions are illustrative, the 11/9 split is the flake-lab result -->
+        <span class="fragment" data-fragment-index="2">
+          <i class="read bad" style="left: 6%"></i><i class="read bad" style="left: 13%"></i>
+          <i class="read good" style="left: 19.5%"></i><i class="read good" style="left: 22.5%"></i>
+          <i class="read bad" style="left: 29%"></i><i class="read bad" style="left: 35%"></i><i class="read bad" style="left: 41%"></i><i class="read bad" style="left: 47%"></i><i class="read bad" style="left: 53%"></i><i class="read bad" style="left: 59%"></i><i class="read bad" style="left: 65%"></i>
+          <i class="read good" style="left: 72%"></i><i class="read good" style="left: 75%"></i><i class="read good" style="left: 78%"></i><i class="read good" style="left: 81%"></i><i class="read good" style="left: 84%"></i><i class="read good" style="left: 87%"></i><i class="read good" style="left: 90%"></i><i class="read good" style="left: 93%"></i><i class="read good" style="left: 96%"></i>
+        </span>
+      </div>
+      <p class="tally fragment" data-fragment-index="2"><b class="b">11 / 20 passed</b> — same test, same code; the verdict depends on <em>when</em> the read lands <span class="muted">(dot positions illustrative)</span></p>
+
+      <div class="lane-label fragment" data-fragment-index="3"><code>await expect(article).toContainText()</code></div>
+      <div class="track lane fragment" data-fragment-index="3">
+        <i class="tick bad" style="left: 4%"></i><i class="tick bad" style="left: 9%"></i><i class="tick bad" style="left: 14%"></i>
+        <i class="tick good stop" style="left: 20%"></i>
+        <div class="read-label good-label" style="left: 20%">retries until it holds — passes here, or in the settled window on a slower run</div>
+      </div>
+    </div>
+    <p class="small muted fragment" data-fragment-index="4"><code>prefer-web-first-assertions</code> is not about style. A snapshot asks the page <em>“what is there now?”</em>; a web-first assertion asks <em>“has it become true yet?”</em></p>
+    <aside class="notes">The playhead replays the top lane into the screenshot: watch the bubble blank, flash the full text, then refill in chunks. Top lane is what the bubble holds over time; red is any moment the sent text isn't in it. The baseline reads once — wherever that lands is the verdict. Twenty runs, eleven landed green. toContainText keeps asking until the answer is yes, up to the timeout, so the red windows cost it time, not the test.</aside>
   </section>
 </template>
 

@@ -1,5 +1,5 @@
 
-39 frozen violations on 21 lines (a plugin rule and its sharper no-restricted-syntax twin often hit the same line)
+40 frozen violations on 21 lines (a plugin rule and its sharper no-restricted-syntax twin often hit the same line)
 
 TEST-SIDE (8) — fix in the spec, no app change. Hand these to the agent.
   tests/ratchet-demo/01-hard-wait.spec.ts:13  playwright/no-wait-for-timeout
@@ -19,7 +19,7 @@ TEST-SIDE (8) — fix in the spec, no app change. Hand these to the agent.
   tests/ratchet-demo/helpers/selectors.ts:7  no-restricted-syntax
       return page.locator(selector);
 
-APP-SIDE (13 uses of 9 selectors) — the element has no accessible name. One ticket per selector.
+APP-SIDE (13 uses of 9 selectors) — the element has no accessible name. One app PR per selector.
     5×  #chat-composer-input
          tests/ratchet-demo/01-hard-wait.spec.ts:15
          tests/ratchet-demo/02-force-click.spec.ts:14
@@ -42,4 +42,4 @@ APP-SIDE (13 uses of 9 selectors) — the element has no accessible name. One ti
     1×  button
          tests/ratchet-demo/06-conditional.spec.ts:17
 
-Fix the app (add a role/label), delete the raw locator, run `ratchet tighten`. Each ticket closed moves the number down.
+Fix the app (add a role/label), delete the raw locator, run `ratchet tighten`. Each PR merged moves the number down.

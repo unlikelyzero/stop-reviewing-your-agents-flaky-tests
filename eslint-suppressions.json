@@ -59,7 +59,7 @@
   },
   "tests/ratchet-demo/06-conditional.spec.ts": {
     "no-restricted-syntax": {
-      "count": 3
+      "count": 4
     },
     "playwright/no-conditional-in-test": {
       "count": 1
