@@ -306,3 +306,40 @@
 @keyframes snap { from { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0.85); } to { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
 .readout code { color: var(--base); }
 .stream-slide:has(.target-shot.holds) .readout code { color: var(--lint); }
+
+/* ---- rule 6: one isVisible() check, two runs ---- */
+.branch-top { display: grid; grid-template-columns: 1.15fr 1fr; gap: 1em; align-items: center; text-align: left; }
+.branch-shot { position: relative; margin: 0; overflow: hidden; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); container-type: inline-size; }
+.branch-shot img { display: block; width: 100%; margin: 0; }
+/* the overlay seam's banner: fixed to the bottom of the viewport, 140px of 720 */
+.ann-banner { position: absolute; left: 0; right: 0; bottom: 0; height: 19.4%; display: flex; align-items: center; justify-content: space-between; padding: 0 2.5cqw; background: #1f2937; color: #fff; font-size: 1.4cqw; box-shadow: 0 -0.4cqw 2cqw rgba(0,0,0,0.5); transform: translateY(105%); transition: transform 0.35s ease; }
+.ann-banner b { background: #6D5AE6; border-radius: 0.6cqw; padding: 0.8cqw 1.4cqw; font-weight: 600; }
+.branch-shot.banner-up .ann-banner { transform: none; }
+.send-ring { position: absolute; left: 47%; top: 89.6%; width: 4cqw; height: 4cqw; margin: -2cqw 0 0 -2cqw; border: 0.4cqw solid var(--base); border-radius: 50%; opacity: 0; z-index: 2; }
+.branch-shot[data-end="fail"] .send-ring { opacity: 1; }
+.check-flag, .end-flag { position: absolute; left: 50%; transform: translateX(-50%); padding: 0.6cqw 1.4cqw; border-radius: 0.8cqw; font-family: ui-monospace, monospace; font-size: 1.8cqw; font-weight: 700; white-space: nowrap; opacity: 0; transition: opacity 0.2s; }
+.check-flag { top: 34%; background: #fff; color: #111; }
+.end-flag { top: 52%; color: #fff; }
+.branch-shot[data-check="true"] .check-flag, .branch-shot[data-check="false"] .check-flag, .branch-shot[data-end="pass"] .end-flag, .branch-shot[data-end="fail"] .end-flag { opacity: 1; }
+.branch-shot[data-check="true"] .check-flag::after { content: 'isVisible() → true'; }
+.branch-shot[data-check="false"] .check-flag::after { content: 'isVisible() → false'; }
+.branch-shot[data-end="pass"] .end-flag { background: var(--lint); }
+.branch-shot[data-end="pass"] .end-flag::after { content: '✔ passes'; }
+.branch-shot[data-end="fail"] .end-flag { background: var(--base); }
+.branch-shot[data-end="fail"] .end-flag::after { content: '✖ banner blocks the composer → timeout'; }
+.branch-code { width: 100%; font-size: 0.42em; margin: 0 0 0.4em; }
+.branch { position: relative; display: grid; grid-template-columns: 4em 1fr 6em; gap: 0.3em 0.8em; align-items: center; margin: 0.6em 0 1.2em; font-size: 0.5em; text-align: left; }
+.branch .lane-label { font-weight: 700; }
+.branch .track { position: relative; display: flex; height: 2.4em; border-radius: 8px; margin-bottom: 1.4em; }
+.branch .band { display: flex; align-items: center; padding: 0 0.6em; font-size: 0.8em; color: rgba(255,255,255,0.8); border-right: 2px solid var(--ts-navy); white-space: nowrap; overflow: hidden; }
+.branch .band.none { background: rgba(255,255,255,0.08); }
+.branch .band.up { background: color-mix(in srgb, var(--ts-orange) 45%, transparent); }
+.branch .band.up.bad { background: color-mix(in srgb, var(--base) 45%, transparent); }
+.branch .check { position: absolute; top: -0.3em; bottom: -0.3em; width: 4px; margin-left: -2px; background: #fff; }
+.branch .check span { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 0.2em; font-family: ui-monospace, monospace; font-size: 0.8em; white-space: nowrap; color: #fff; }
+.branch .outcome { font-weight: 700; margin-bottom: 1.4em; white-space: nowrap; }
+.branch .outcome.good { color: var(--lint); } .branch .outcome.bad { color: var(--base); }
+.branch .playhead { position: absolute; z-index: 4; width: 3px; margin-left: -1.5px; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.7); pointer-events: none; }
+.branch-fix { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; text-align: left; }
+.branch-fix p { margin: 0 0 0.2em; }
+.branch-fix pre { width: 100%; font-size: 0.38em; margin: 0; }

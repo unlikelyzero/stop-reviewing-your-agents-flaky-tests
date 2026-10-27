@@ -179,6 +179,38 @@ function playStream(slide) {
   streamRaf = requestAnimationFrame(frame);
 }
 
+/* ---- rule 6: one isVisible() check, two runs; the playhead drives the banner in the screenshot ---- */
+// Both runs check at CHECK. What differs is when the banner mounts (the overlay seam's 200–1200 ms).
+const CHECK = 0.4, DISMISS = 0.47;
+const RUNS = [{ banner: 0.25 }, { banner: 0.6 }];
+let branchRaf = 0;
+function playBranch(slide) {
+  cancelAnimationFrame(branchRaf);
+  const tracks = slide?.querySelectorAll('.branch .track');
+  if (!tracks?.length) return;
+  // Before any fragment: run A. Fragment 0: run B. Later fragments hold run B's end state.
+  const f = Reveal.getIndices().f ?? -1;
+  const run = f >= 0 ? 1 : 0;
+  const track = tracks[run];
+  const head = slide.querySelector('.branch .playhead');
+  const shot = slide.querySelector('.branch-shot');
+  const saw = RUNS[run].banner <= CHECK;
+  head.style.top = `${track.offsetTop}px`;
+  head.style.height = `${track.offsetHeight}px`;
+  const ms = 4000;
+  const start = performance.now() - (f >= 1 ? ms : 0);
+  const frame = now => {
+    const t = Math.min((now - start) / ms, 1);
+    head.style.left = `${track.offsetLeft + t * track.offsetWidth}px`;
+    shot.classList.toggle('banner-up', t >= RUNS[run].banner && !(saw && t >= DISMISS));
+    shot.dataset.check = t < CHECK ? '' : String(saw);
+    shot.dataset.end = t < 1 ? '' : saw ? 'pass' : 'fail';
+    if (t < 1) branchRaf = requestAnimationFrame(frame);
+  };
+  branchRaf = requestAnimationFrame(frame);
+}
+const animateSlide = slide => { playStream(slide); playBranch(slide); };
+
 /* ---- synced playback ---- */
 function pairOn(slide) {
   return slide ? [...slide.querySelectorAll('video.vid[src]')] : [];
@@ -211,11 +243,11 @@ function togglePair(vids) {
     },
   });
 
-  Reveal.on('ready', e => playStream(e.currentSlide));
-  Reveal.on('fragmentshown', () => playStream(Reveal.getCurrentSlide()));
-  Reveal.on('fragmenthidden', () => playStream(Reveal.getCurrentSlide()));
+  Reveal.on('ready', e => animateSlide(e.currentSlide));
+  Reveal.on('fragmentshown', () => animateSlide(Reveal.getCurrentSlide()));
+  Reveal.on('fragmenthidden', () => animateSlide(Reveal.getCurrentSlide()));
   Reveal.on('slidechanged', e => {
-    playStream(e.currentSlide);
+    animateSlide(e.currentSlide);
     pairOn(e.previousSlide).forEach(v => v.pause());
     const vids = pairOn(e.currentSlide);
     if (vids.length) setTimeout(() => playPair(vids), 350);

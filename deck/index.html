@@ -385,6 +385,65 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
   </section>
 </template>
 
+<!-- Rule 6: one isVisible() check picks a branch by timing; the playhead drives the banner in the screenshot (replaces the video pair). -->
+<template id="alt-06-conditional">
+  <section class="branch-slide">
+    <h3>Two tests in one. The green check doesn't say which ran.</h3>
+    <div class="branch-top">
+      <figure class="branch-shot">
+        <img src="what-iff-chat.jpg" alt="what-iff chat screen" />
+        <div class="ann-banner"><span>🎉 New: scheduled agents are live. Read the release notes.</span><b>Got it</b></div>
+        <i class="send-ring"></i>
+        <span class="check-flag"></span>
+        <span class="end-flag"></span>
+      </figure>
+      <div>
+        <pre class="branch-code"><code class="language-ts" data-trim>
+const banner = page.locator('#demo-announce');
+if (await banner.isVisible()) {
+  await banner.locator('button').click();
+}
+await page.locator('#chat-composer-input').fill('Banner handled?');
+        </code></pre>
+        <p class="small">The banner mounts 200–1200 ms after load. <code>isVisible()</code> answers once, the moment it runs.</p>
+      </div>
+    </div>
+    <div class="branch">
+      <i class="playhead"></i>
+      <div class="lane-label">Run A</div>
+      <div class="track">
+        <div class="band none" style="flex: 25">no banner</div><div class="band up" style="flex: 22">banner</div><div class="band none" style="flex: 53">dismissed</div>
+        <i class="check" style="left: 40%"><span>isVisible() → true · dismiss</span></i>
+      </div>
+      <div class="outcome good">✔ passes</div>
+
+      <div class="lane-label fragment" data-fragment-index="1">Run B</div>
+      <div class="track fragment" data-fragment-index="1">
+        <div class="band none" style="flex: 60">no banner</div><div class="band up bad" style="flex: 40">banner over the composer</div>
+        <i class="check" style="left: 40%"><span>isVisible() → false · skip</span></i>
+      </div>
+      <div class="outcome bad fragment" data-fragment-index="1">✖ timeout</div>
+    </div>
+    <div class="branch-fix fragment" data-fragment-index="2">
+      <div>
+        <p class="small"><strong>Part of this page?</strong> Assert it, then act.</p>
+        <pre><code class="language-ts" data-trim>
+await expect(banner).toBeVisible();
+await banner.getByRole('button', { name: 'Dismiss announcement' }).click();
+        </code></pre>
+      </div>
+      <div>
+        <p class="small"><strong>Can appear any time?</strong> Hand it to Playwright.</p>
+        <pre><code class="language-ts" data-trim>
+await page.addLocatorHandler(banner, () =>
+  banner.getByRole('button', { name: 'Dismiss announcement' }).click());
+        </code></pre>
+      </div>
+    </div>
+    <aside class="notes">The agent was told "sometimes a banner shows up" and wrapped the dismissal in an if. isVisible doesn't wait; it answers once. Run A: the banner was already there at the check, so the test dismissed it and passed. Run B, same code: the check came first, said false, skipped the dismissal, and then the banner landed on the composer. The fill waits behind it until the timeout. A green check doesn't tell you which path ran. The hook now says that, and offers the two fixes: if the banner belongs to this state, assert it; if it can show up any time, addLocatorHandler dismisses it whenever it appears.</aside>
+  </section>
+</template>
+
 <!-- Rule 3: the same locator against two environments' data (replaces the video pair). -->
 <template id="alt-03-nth-first">
   <section class="nth-slide">
