@@ -155,6 +155,32 @@ https://github.com/playwright-community/eslint-plugin-playwright/tree/main/docs/
     <!-- ============================================================ SEGMENTS (generated) -->
     <div id="segments"></div>
 
+    <!-- ============================================================ APP CHANGES -->
+    <section>
+      <p class="kicker">Before the rollout</p>
+      <h2>Unfortunately, 80% of bad tests need an app change</h2>
+      <div class="two-col">
+        <div>
+          <h3>The rule points at the app</h3>
+          <ul class="small">
+            <li><code>no-raw-locators</code> → the control has no accessible name: add an <code>aria-label</code> or a <code>&lt;label&gt;</code></li>
+            <li><code>no-nth-methods</code> → every row is “New thread”: give items something unique</li>
+            <li><code>no-conditional-in-test</code> → the test can't set the state: add a seed or a flag</li>
+            <li><code>no-wait-for-timeout</code> → nothing says “done”: expose a loading state to assert on</li>
+          </ul>
+        </div>
+        <div class="fragment">
+          <h3>QA can make that change now</h3>
+          <ul class="small">
+            <li>A coding harness opens the app repo as easily as the test repo</li>
+            <li>The lint message already names the fix</li>
+            <li>The agent makes it in the app; dev reviews a small PR instead of triaging a ticket</li>
+          </ul>
+        </div>
+      </div>
+      <aside class="notes">Here's the uncomfortable part before we talk rollout: most of these violations can't be fixed in the test. The test reached for CSS because the button has no name; it used nth because every thread is called the same thing; it branched because it had no way to set the state. Those are app changes. The good news is that the same harness that wrote the test can make them. Claude Code or Cursor opens the app repo just as easily, the lint message already says what to add, and dev gets a two-line PR to review instead of a ticket to triage.</aside>
+    </section>
+
     <!-- ============================================================ RATCHET -->
     <section>
       <section data-background-color="#072A42">
