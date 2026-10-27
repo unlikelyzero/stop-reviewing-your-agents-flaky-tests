@@ -56,7 +56,11 @@ await page.locator('button.send').first().click();
 await button.click({ force: true });
 if (await banner.isVisible()) await banner.click();
       </code></pre>
-      <p class="fragment">Green today. Three weeks later it's the flake blocking someone else's PR.</p>
+      <div class="fragment flake-timeline" data-fragment-index="1">
+        <div class="tl-track"><i class="tl-fill"></i></div>
+        <div class="tl-node write" style="--i:0"><b>✎</b><span>Agent writes it</span><small>day 1</small></div><div class="tl-node pass" style="--i:1"><b>✔</b><span>its PR</span><small>day 1</small></div><div class="tl-node pass" style="--i:2"><b>✔</b><span>main</span><small>day 2</small></div><div class="tl-gap" style="--i:3">· · · three weeks · · ·</div><div class="tl-node fail" style="--i:4"><b>✖</b><span>someone else's PR</span><small></small></div><div class="tl-node fail" style="--i:5"><b>✖</b><span>re-run</span><small></small></div><div class="tl-node fail" style="--i:6"><b>✖</b><span>re-run</span><small></small></div><div class="tl-node fail" style="--i:7"><b>✖</b><span>another PR</span><small></small></div><div class="tl-node fail" style="--i:8"><b>✖</b><span>main</span><small></small></div>
+      </div>
+      <p class="fragment tl-caption" data-fragment-index="1">Green today. Three weeks later it's the flake blocking someone else's PR.</p>
     </section>
 
     <section>

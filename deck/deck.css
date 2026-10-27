@@ -190,3 +190,24 @@
 .stage:has(.mock-banner.visible) .mock-send .spinner { display: none; }
 .stage:has(.mock-banner.visible) .mock-send .label { font-size: inherit; }
 .stage:has(.mock-banner.visible) .mock-send .label::before, .stage:has(.mock-banner.visible) .mock-send .label::after { content: none; }
+
+/* ---- green today, red later: a test's run history (problem slide) ---- */
+.flake-timeline { position: relative; display: grid; grid-template-columns: repeat(9, 1fr); align-items: start; margin: 0.6em 0 0.2em; font-size: 0.6em; }
+.flake-timeline .tl-track { position: absolute; left: 5.5%; right: 5.5%; top: 1.2em; height: 4px; background: rgba(255,255,255,0.12); border-radius: 2px; }
+.flake-timeline .tl-fill { position: absolute; inset: 0; transform-origin: left; transform: scaleX(0); border-radius: 2px;
+  background: linear-gradient(90deg, var(--lint) 0 25%, rgba(255,255,255,0.3) 25% 50%, var(--base) 50%); }
+.flake-timeline .tl-node, .flake-timeline .tl-gap { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.3em; opacity: 0; }
+.flake-timeline .tl-node b { width: 2.4em; height: 2.4em; border-radius: 50%; display: grid; place-items: center; font-size: 1em; color: #fff; background: var(--ts-navy); border: 3px solid; }
+.flake-timeline .tl-node.write b { border-color: var(--ts-sky); color: var(--ts-sky); }
+.flake-timeline .tl-node.pass b { border-color: var(--lint); background: var(--lint); }
+.flake-timeline .tl-node.fail b { border-color: var(--base); background: var(--base); }
+.flake-timeline .tl-node span { font-weight: 600; text-align: center; line-height: 1.2; }
+.flake-timeline .tl-node small { color: var(--muted); }
+.flake-timeline .tl-gap { padding-top: 0.6em; color: var(--muted); font-style: italic; white-space: nowrap; }
+/* plays once the fragment is shown: the track fills left to right, each run lands in turn */
+.flake-timeline.visible .tl-fill { animation: tl-fill 4.2s linear 0.2s both; }
+.flake-timeline.visible .tl-node, .flake-timeline.visible .tl-gap { animation: tl-pop 0.35s ease-out both; animation-delay: calc(0.2s + var(--i) * 0.5s); }
+.flake-timeline.visible .tl-gap { animation-duration: 0.8s; }
+.tl-caption.visible { transition-delay: 4.6s; }
+@keyframes tl-fill { to { transform: scaleX(1); } }
+@keyframes tl-pop { from { opacity: 0; transform: translateY(0.6em) scale(0.6); } to { opacity: 1; transform: none; } }
