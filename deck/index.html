@@ -377,15 +377,15 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
     <div class="two-col lifecycle-outcomes">
       <div class="fragment" data-fragment-index="6">
         <h3><code>click()</code></h3>
-        <p class="small"><strong>Retries</strong> the checks until the banner is gone or the timeout hits. The failure names the cause: <em>“&lt;div role=dialog&gt; intercepts pointer events”</em>.</p>
+        <p class="small">Waits for Attached, then <strong>retries</strong> Visible, Enabled and Stable (one check) and the hit test until the banner is gone or the timeout hits. The failure names the cause: <em>“&lt;div role=dialog&gt; intercepts pointer events”</em>.</p>
       </div>
       <div class="fragment" data-fragment-index="7">
         <h3><code>click({ force: true })</code></h3>
-        <p class="small"><strong>Skips</strong> Visible, Stable, Receives events, Enabled — dispatches at the coordinates anyway. The banner gets the click; the test fails three steps later on an unrelated assertion.</p>
+        <p class="small">Still waits for Attached. Then <strong>skips</strong> the waits, the hit test and any <code>addLocatorHandler</code>. Not visible at that instant? Fails at once, no retry. Otherwise it clicks the coordinates: the banner gets the click, and the test fails later on an unrelated assertion.</p>
       </div>
     </div>
-    <p class="small muted fragment" data-fragment-index="7">Linted fix: <code>getByRole('button', { name: 'Dismiss announcement' }).click()</code> first — then the real click passes every check.</p>
-    <aside class="notes">Walk the pipeline. force:true is not "click harder"; it is "stop checking". Every check it skips is a reason the test would have told you what went wrong.</aside>
+    <p class="small muted fragment" data-fragment-index="7">The timeout starts when <code>click()</code> is called, not when the element attaches: waiting for it counts, force or not.<br/>Linted fix: <code>getByRole('button', { name: 'Dismiss announcement' }).click()</code> first — then the real click passes every check.</p>
+    <aside class="notes">Walk the pipeline. Visible, enabled and stable are one check that Playwright retries with a short backoff, then it hit-tests the click point. force:true is not "click harder"; it is "stop checking": it still waits for the element to attach, then skips the waits, the hit test and any locator handler you registered, and if the element isn't visible at that instant it throws straight away. The timeout clock started when click() was called, so time spent waiting to attach counts either way. Every check force skips is a reason the test would have told you what went wrong.</aside>
   </section>
 </template>
 
