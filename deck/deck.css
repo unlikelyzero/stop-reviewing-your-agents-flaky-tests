@@ -343,3 +343,11 @@
 .branch-fix { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; text-align: left; }
 .branch-fix p { margin: 0 0 0.2em; }
 .branch-fix pre { width: 100%; font-size: 0.38em; margin: 0; }
+
+/* ---- rule 7: no-restricted-syntax for anything else ---- */
+.nrs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8em; margin: 0.4em 0; text-align: left; }
+.nrs { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 0.5em 0.7em; font-size: 0.58em; }
+.nrs .seen { width: 100%; margin: 0 0 0.4em; font-size: 0.85em; box-shadow: none; }
+.nrs .seen code { border-left: 4px solid var(--base); }
+.nrs .sel { display: block; font-size: 0.75em; color: var(--ts-orange); word-break: break-all; }
+.nrs p { margin: 0.4em 0 0; color: var(--lint); }

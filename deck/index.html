@@ -411,6 +411,38 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
   </section>
 </template>
 
+<!-- Rule 7: no-restricted-syntax for patterns no plugin rule covers (inserted before the video pair by deck.js). -->
+<template id="explain-07-loophole">
+  <section class="nrs-slide">
+    <h3><code>no-restricted-syntax</code>: for anything else</h3>
+    <p class="small">Saw it twice in review? It's one AST selector and a message that says what to do instead.</p>
+    <div class="nrs-grid">
+      <div class="nrs">
+        <pre class="seen"><code class="language-ts" data-trim>test.setTimeout(120_000);</code></pre>
+        <code class="sel">CallExpression[callee.object.name="test"][callee.property.name=/^(setTimeout|slow)$/]</code>
+        <p>→ Don't raise the timeout to get a slow step through. Assert the state you're waiting for; if the app is slow, that's the bug.</p>
+      </div>
+      <div class="nrs">
+        <pre class="seen"><code class="language-ts" data-trim>test.describe.configure({ retries: 3 });</code></pre>
+        <code class="sel">CallExpression[callee.property.name="configure"] Property[key.name="retries"]</code>
+        <p>→ Retries belong in playwright.config.ts, for CI. In a spec they hide the flake you're writing.</p>
+      </div>
+      <div class="nrs">
+        <pre class="seen"><code class="language-ts" data-trim>await page.goto('http://localhost:4200/chat');</code></pre>
+        <code class="sel">Literal[value=/^https?:\/\/(localhost|127\.0\.0\.1)/]</code>
+        <p>→ Use page.goto('/chat'). baseURL comes from the config, so the test runs on every environment.</p>
+      </div>
+      <div class="nrs">
+        <pre class="seen"><code class="language-ts" data-trim>const name = `user-${Math.random()}`;</code></pre>
+        <code class="sel">CallExpression[callee.object.name="Math"][callee.property.name="random"]</code>
+        <p>→ Derive test data from the seeded fixture, so a failure reproduces on the next run.</p>
+      </div>
+    </div>
+    <p class="small muted">Write selectors in the <a href="https://typescript-eslint.io/play">typescript-eslint playground</a>. When one needs an allow-list or has to know which file it's in, graduate it to a custom rule: next.</p>
+    <aside class="notes">The plugin covers the Playwright API. Everything specific to your team — a timeout bump, retries in a spec, a hard-coded host, unseeded data — is one no-restricted-syntax entry: an AST selector for the pattern and a message written as the fix. Each of these selectors runs as written. When the selector can't express the rule — it needs an allow-list, or it depends on which file it's in — that's when you write a custom rule, and that's the loophole we'll look at next.</aside>
+  </section>
+</template>
+
 <!-- Rule 6: one isVisible() check picks a branch by timing; the playhead drives the banner in the screenshot (replaces the video pair). -->
 <template id="alt-06-conditional">
   <section class="branch-slide">

@@ -40,10 +40,6 @@ const LINT_OUT = {
       assert it: await expect(locator).toBeVisible(), then act on it. If it can appear at any time
       (cookie notice, announcement), register it once before the steps:
       await page.addLocatorHandler(locator, async () => { /* dismiss it */ }).`,
-  '07-loophole': `✗ tests/07-loophole.spec.ts:16:11  [demo/no-page-in-spec]
-    await css(page, '#chat-composer-input').fill('Laundered selector');
-    → Specs must not touch \`page\` directly. Move this call into a page object under
-      tests/pages/ and call its method from the spec. Page objects own locators; specs own intent.`,
 };
 
 async function loadData() {
@@ -83,10 +79,6 @@ await expect(page.getByRole('heading', { level: 1 })).toBeVisible();   // surviv
 await expect(banner).toBeVisible();                                   // assert the state
 await banner.getByRole('button', { name: 'Dismiss announcement' }).click();
 await expect(banner).toBeHidden();                                    // then act on it`,
-  '07-loophole': `// pages/chat.page.ts — the only file allowed to hold page
-this.sendButton = page.getByRole('button', { name: 'Send message' });
-// spec
-await chat.send('Laundered selector');`,
 };
 
 function buildSegments(data) {
@@ -102,8 +94,10 @@ function buildSegments(data) {
     node.querySelector('.flake').textContent = seg.flake;
     node.querySelector('.cause').textContent = seg.cause ?? '';
     node.querySelector('.fix').textContent = seg.fix ?? '';
-    node.querySelector('.lint-out code').textContent = LINT_OUT[seg.id] ?? '';
-    node.querySelector('.needed-out code').textContent = NEEDED[seg.id] ?? '';
+    // A rule with no hook output listed drops the "what the agent saw" block under its videos.
+    if (!LINT_OUT[seg.id]) node.querySelector('.agent-saw').remove();
+    else node.querySelector('.lint-out code').textContent = LINT_OUT[seg.id];
+    node.querySelector('.needed-out code')?.replaceChildren(NEEDED[seg.id] ?? '');
 
     for (const [proj, cls] of [['baseline', 'base'], ['linted', 'lint']]) {
       const side = node.querySelector(`.side-${cls}`);
