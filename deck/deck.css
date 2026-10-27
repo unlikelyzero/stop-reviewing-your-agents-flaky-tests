@@ -352,3 +352,9 @@
 .nrs .seen code { border-left: 4px solid var(--base); }
 .nrs .sel { display: block; font-size: 0.75em; color: var(--ts-orange); word-break: break-all; }
 .nrs p { margin: 0.4em 0 0; color: var(--lint); }
+/* The PDF is printed mid-animation; show the finished run history instead. */
+html.print-pdf .flake-timeline .tl-fill { animation: none; transform: none; }
+html.print-pdf .flake-timeline .tl-node, html.print-pdf .flake-timeline .tl-gap { animation: none; opacity: 1; }
+html.print-pdf .tl-caption { transition: none; }
+html.print-pdf .flake-timeline { font-size: 0.48em; margin: 0.3em 0 0; }
+html.print-pdf .tl-caption { margin-top: 0.3em; }
