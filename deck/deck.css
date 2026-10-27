@@ -268,6 +268,32 @@
 .app-tour ul { font-size: 0.5em; }
 .app-legend code { white-space: nowrap; }
 
+/* ---- same app, new CSS (rule 4) ---- */
+.restyle { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; text-align: left; }
+.restyle .layout { margin: 0; }
+.restyle figcaption { font-weight: 700; font-size: 0.55em; margin-bottom: 0.3em; color: var(--ts-sky); }
+.restyle figcaption span { color: var(--muted); font-weight: 400; }
+.restyle img, .mock-b { display: block; width: 100%; aspect-ratio: 16 / 9; margin: 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); }
+.restyle .dom { width: 100%; margin: 0.3em 0 0; font-size: 0.36em; box-shadow: none; }
+.restyle .dom code { padding: 0.5em 0.8em; }
+/* a deliberately different design: light, top bar, composer on top, send on the left */
+.mock-b { background: #f6f3ee; color: #222; font-family: Georgia, serif; overflow: hidden; display: flex; flex-direction: column; font-size: 0.4em; }
+.mock-b header { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 1.2em; background: #fff; border-bottom: 1px solid #e3ddd3; }
+.mock-b .logo { font-style: italic; font-weight: 700; color: #b4462b; }
+.mock-b h1 { margin: 0; font-size: 1.3em; color: #222; text-transform: none; font-family: Georgia, serif; letter-spacing: 0; }
+.mock-b .nav { color: #888; font-size: 0.85em; }
+.mock-b .pill { display: flex; align-items: center; gap: 0.8em; margin: 1.2em auto 0.6em; width: 70%; padding: 0.5em 0.6em; background: #fff; border: 2px solid #b4462b; border-radius: 999px; color: #999; }
+.mock-b .pill button { width: 2.2em; height: 2.2em; border-radius: 50%; border: 0; background: #b4462b; color: #fff; font-size: 1em; }
+.mock-b .cards { display: grid; gap: 0.6em; padding: 0 15%; }
+.mock-b .cards p { margin: 0; padding: 0.7em 1em; background: #fff; border-left: 4px solid #2b7bb4; border-radius: 4px; font-size: 1em; text-align: left; }
+.mock-b .cards p.me { border-left-color: #b4462b; text-align: right; }
+.verdicts { margin: 0.4em auto 0.2em; font-size: 0.45em; border-collapse: collapse; }
+.verdicts th, .verdicts td { padding: 0.25em 0.8em; border: 0; }
+.verdicts th { color: var(--muted); font-weight: 400; }
+.verdicts tr.raw code { color: #f2b8ba; }
+.verdicts td.ok { color: var(--lint); font-weight: 700; text-align: center; }
+.verdicts td.bad { color: var(--base); font-weight: 700; text-align: center; white-space: nowrap; }
+
 /* ---- rule 5: the playhead and the live bubble it drives ---- */
 .stream { position: relative; }
 .stream .playhead { position: absolute; z-index: 4; width: 3px; margin-left: -1.5px; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.7); pointer-events: none; }

@@ -409,6 +409,42 @@ npm i -D eslint eslint-plugin-playwright typescript-eslint
   </section>
 </template>
 
+<!-- Rule 4: the same app before and after a restyle; CSS paths break, role + name survive (inserted before the video pair by deck.js). -->
+<template id="explain-04-raw-locator">
+  <section class="restyle-slide">
+    <h3>Same app. New CSS.</h3>
+    <div class="restyle">
+      <figure class="layout">
+        <figcaption>what-iff today</figcaption>
+        <img src="what-iff-chat.jpg" alt="what-iff today: dark theme, sidebar on the left, composer at the bottom" />
+        <pre class="dom"><code>&lt;form class="composer"&gt;&lt;div&gt;&lt;div&gt;
+  &lt;textarea id="chat-composer-input" aria-label="Message"&gt;
+  &lt;button class="composer__send" aria-label="Send message"&gt;</code></pre>
+      </figure>
+      <figure class="layout fragment" data-fragment-index="1">
+        <figcaption>after a redesign <span>(mock)</span></figcaption>
+        <div class="mock-b">
+          <header><span class="logo">whatiff</span><h1>Demo chat</h1><span class="nav">Chat · People · Gallery</span></header>
+          <div class="pill"><button aria-label="Send message">➤</button><span>Message Demo…</span></div>
+          <div class="cards"><p class="me">echo-me-7f3a</p><p>echo-me-7f3a</p></div>
+        </div>
+        <pre class="dom"><code>&lt;div class="flex gap-2 rounded-full"&gt;
+  &lt;button class="btn-icon" aria-label="Send message"&gt;
+  &lt;textarea class="grow" aria-label="Message"&gt;</code></pre>
+      </figure>
+    </div>
+    <table class="verdicts">
+      <tr><th></th><th>today</th><th class="fragment" data-fragment-index="1">redesign</th></tr>
+      <tr class="raw"><td><code>locator('form.composer textarea#chat-composer-input')</code></td><td class="ok">✔</td><td class="bad fragment" data-fragment-index="2">✖ 0 matches</td></tr>
+      <tr class="raw"><td><code>locator('form.composer &gt; div &gt; div &gt; button.composer__send')</code></td><td class="ok">✔</td><td class="bad fragment" data-fragment-index="2">✖ 0 matches</td></tr>
+      <tr><td><code>getByRole('textbox', { name: 'Message' })</code></td><td class="ok">✔</td><td class="ok fragment" data-fragment-index="2">✔</td></tr>
+      <tr><td><code>getByRole('button', { name: 'Send message' })</code></td><td class="ok">✔</td><td class="ok fragment" data-fragment-index="2">✔</td></tr>
+    </table>
+    <p class="small fragment" data-fragment-index="3">CSS is how it looks; the accessible name is what it <em>is</em>. If the agent reached for raw CSS, ask first whether a name exists — often it doesn't, and that's the app's bug.</p>
+    <aside class="notes">Left is what-iff today. Right is the same app after a restyle — new theme, layout flipped, utility classes instead of BEM. The agent's selectors were copied from today's DOM, so every one of them is a fact about the CSS. The role-and-name locators are facts about what the control is, which is what a screen reader uses too, so they survive. And when the agent couldn't find a name to use, that's usually because there isn't one — no-raw-locators is pointing at an accessibility gap.</aside>
+  </section>
+</template>
+
 <!-- Rule 5: when a one-shot textContent() read lands, against what the bubble holds (inserted before the video pair by deck.js). -->
 <template id="explain-05-web-first">
   <section class="stream-slide">
