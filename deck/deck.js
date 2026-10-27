@@ -33,9 +33,13 @@ const LINT_OUT = {
     expect(text).toContain('echo-me-7f3a');
     → Replace expect(await locator.textContent()) with
       await expect(locator).toContainText(...) so the assertion retries.`,
-  '06-conditional': `✗ tests/06-conditional.spec.ts:16:5  [playwright/no-conditional-in-test]
+  '06-conditional': `✗ tests/06-conditional.spec.ts:16:15  [no-restricted-syntax]
     if (await banner.isVisible()) {
-    → Avoid having conditionals in tests.`,
+    → isVisible() / isHidden() / isEnabled() answer once, right now, without waiting, so an if on
+      them picks a path by timing. Remove the branch. If the element belongs to this page state,
+      assert it: await expect(locator).toBeVisible(), then act on it. If it can appear at any time
+      (cookie notice, announcement), register it once before the steps:
+      await page.addLocatorHandler(locator, async () => { /* dismiss it */ }).`,
   '07-loophole': `✗ tests/07-loophole.spec.ts:16:11  [demo/no-page-in-spec]
     await css(page, '#chat-composer-input').fill('Laundered selector');
     → Specs must not touch \`page\` directly. Move this call into a page object under

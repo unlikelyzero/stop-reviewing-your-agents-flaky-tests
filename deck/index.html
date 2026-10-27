@@ -170,11 +170,11 @@ git add eslint-suppressions.json     # commit the debt, with a number on it
         <h2>Live: the ratchet on this repo's baseline</h2>
         <pre><code class="language-bash" data-trim>
 $ npm run ratchet:init
-✔ froze 39 existing violations in eslint-suppressions.json. Commit it. New violations now fail.
+✔ froze 40 existing violations in eslint-suppressions.json. Commit it. New violations now fail.
 
 $ sed -i 's/click({ force: true })/click()/' tests/02-force-click.spec.ts   # someone fixes one
 $ npm run ratchet:tighten
-✔ pruned stale suppressions. The number only goes down.           # 39 → 38
+✔ pruned stale suppressions. The number only goes down.           # 40 → 39
 
 $ echo "await page.waitForTimeout(500);" >> tests/03-nth-first.spec.ts    # agent adds one
 $ npm run ratchet:tighten
@@ -212,7 +212,7 @@ $ npm run ratchet:tighten
         <pre><code class="language-text" data-trim>
 $ npm run ratchet:report
 
-39 frozen violations on 21 lines
+40 frozen violations on 21 lines
 
 TEST-SIDE (8) — fix in the spec, no app change. Hand these to the agent.
   tests/01-hard-wait.spec.ts:13   playwright/no-wait-for-timeout

@@ -125,7 +125,7 @@ file. A new violation is not in it and fails. A fixed one leaves a stale entry t
 prunes. The number only goes down.
 
 `tests/ratchet-demo/` is a frozen copy of the baseline specs with the linted rules applied:
-39 violations in `eslint-suppressions.json`, so the ratchet can be watched working.
+40 violations in `eslint-suppressions.json`, so the ratchet can be watched working.
 
 ### Most of the suppressions are app bugs
 
