@@ -115,11 +115,11 @@ if (cmd === 'report') {
   for (const t of testSide) console.log(`  ${t.file}:${t.line}  ${t.rule}\n      ${t.src}`);
 
   const appCount = [...appSide.values()].reduce((a, v) => a + v.length, 0);
-  console.log(`\nAPP-SIDE (${appCount} uses of ${appSide.size} selectors) — the element has no accessible name. One ticket per selector.`);
+  console.log(`\nAPP-SIDE (${appCount} uses of ${appSide.size} selectors) — the element has no accessible name. One app PR per selector.`);
   for (const [sel, uses] of [...appSide.entries()].sort((a, b) => b[1].length - a[1].length)) {
     console.log(`  ${String(uses.length).padStart(3)}×  ${sel}`);
     for (const u of uses.slice(0, 3)) console.log(`         ${u.file}:${u.line}`);
     if (uses.length > 3) console.log(`         … +${uses.length - 3} more`);
   }
-  console.log('\nFix the app (add a role/label), delete the raw locator, run `ratchet tighten`. Each ticket closed moves the number down.');
+  console.log('\nFix the app (add a role/label), delete the raw locator, run `ratchet tighten`. Each PR merged moves the number down.');
 }

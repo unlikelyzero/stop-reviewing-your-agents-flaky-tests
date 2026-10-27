@@ -132,7 +132,7 @@ prunes. The number only goes down.
 `no-raw-locators` firing on `page.locator('#chat-composer-input')` is not a test problem. The
 element has no role, no label, no accessible name; a screen reader cannot find it either.
 The fix is in the app. `ratchet:report` groups the app-side entries by selector so each one
-becomes a ticket: add the label, switch the test to `getByRole('textbox', { name: 'Message' })`,
+becomes one app PR, which QA can open with the same agent: add the label, switch the test to `getByRole('textbox', { name: 'Message' })`,
 run `tighten`, and the number drops by however many specs used that selector.
 
 ## Deck controls

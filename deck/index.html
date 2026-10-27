@@ -162,12 +162,12 @@ https://github.com/playwright-community/eslint-plugin-playwright/tree/main/docs/
       <h2>Unfortunately, 80% of bad tests need an app change</h2>
       <div class="two-col">
         <div>
-          <h3>The rule points at the app</h3>
+          <h3>The ratchet report's app-side list</h3>
           <ul class="small">
-            <li><code>no-raw-locators</code> → the control has no accessible name: add an <code>aria-label</code> or a <code>&lt;label&gt;</code></li>
-            <li><code>no-nth-methods</code> → every row is “New thread”: give items something unique</li>
-            <li><code>no-conditional-in-test</code> → the test can't set the state: add a seed or a flag</li>
-            <li><code>no-wait-for-timeout</code> → nothing says “done”: expose a loading state to assert on</li>
+            <li><code>#chat-composer-input</code> (5 uses) → the box has no name: <code>&lt;label&gt;Message&lt;/label&gt;</code></li>
+            <li><code>button.composer__send</code> → the icon button has no name: <code>aria-label="Send message"</code></li>
+            <li><code>#demo-announce</code> → the banner is a <code>div</code>: <code>role="dialog"</code> + a name</li>
+            <li>No name for the test is no name for a screen reader: the suppressions file is your a11y backlog</li>
           </ul>
         </div>
         <div class="fragment">
@@ -179,7 +179,7 @@ https://github.com/playwright-community/eslint-plugin-playwright/tree/main/docs/
           </ul>
         </div>
       </div>
-      <aside class="notes">Here's the uncomfortable part before we talk rollout: most of these violations can't be fixed in the test. The test reached for CSS because the button has no name; it used nth because every thread is called the same thing; it branched because it had no way to set the state. Those are app changes. The good news is that the same harness that wrote the test can make them. Claude Code or Cursor opens the app repo just as easily, the lint message already says what to add, and dev gets a two-line PR to review instead of a ticket to triage.</aside>
+      <aside class="notes">Here's the uncomfortable part before we talk rollout: most of these violations can't be fixed in the test. The ratchet report sorts them: 13 of the 21 frozen lines are raw locators on elements with no accessible name. The test reached for CSS because the box has no label and the button has no name, and a screen reader has the same problem. Those are app changes. The good news is that the same harness that wrote the test can make them. Claude Code or Cursor opens the app repo just as easily, the lint message already says what to add, and dev gets a two-line PR to review instead of a ticket to triage.</aside>
     </section>
 
     <!-- ============================================================ RATCHET -->
@@ -219,30 +219,6 @@ $ npm run ratchet:tighten
       </section>
 
       <section>
-        <h2>80% of the time, the <em>app</em> has to change</h2>
-        <p class="lead">The agent used <code>page.locator('#chat-composer-input')</code> because nothing better existed.</p>
-        <div class="two-col">
-          <div>
-            <h3>What <code>no-raw-locators</code> is really saying</h3>
-            <ul>
-              <li>This element has no role, no name, no label</li>
-              <li>A screen reader can't find it either</li>
-              <li>The fix is an <code>aria-label</code> or a <code>&lt;label&gt;</code> — in the app</li>
-            </ul>
-          </div>
-          <div>
-            <h3>So the suppressions file is…</h3>
-            <ul>
-              <li>…your a11y backlog, with line numbers</li>
-              <li>…owned jointly by QA and the dev team</li>
-              <li>…one ticket per <em>selector</em>, not per violation</li>
-            </ul>
-          </div>
-        </div>
-        <aside class="notes">This is the part people don't expect. The lint rule is a testability rule, and testability is accessibility. You will not fix this alone, and the ratchet is how you make it a shared, visible, shrinking number instead of an argument.</aside>
-      </section>
-
-      <section>
         <h2>The workflow with your dev team</h2>
         <pre><code class="language-text" data-trim>
 $ npm run ratchet:report
@@ -255,7 +231,7 @@ TEST-SIDE (8) — fix in the spec, no app change. Hand these to the agent.
   tests/06-conditional.spec.ts:16 playwright/no-conditional-in-test
   …
 
-APP-SIDE (13 uses of 9 selectors) — element has no accessible name. One ticket per selector.
+APP-SIDE (13 uses of 9 selectors) — element has no accessible name. One app PR per selector.
     5×  #chat-composer-input                       → &lt;label for="chat-composer-input"&gt;Message&lt;/label&gt;
     1×  button.composer__send                      → aria-label="Send message"
     1×  .chat-page__thread-name-trigger h1         → it's already an h1: getByRole('heading')
@@ -263,7 +239,7 @@ APP-SIDE (13 uses of 9 selectors) — element has no accessible name. One ticket
         </code></pre>
         <ol class="small">
           <li><strong>Test-side</strong> → the agent, with the hook on. Done in an afternoon.</li>
-          <li><strong>App-side</strong> → one ticket per selector to the dev team. Each fix: add the name, delete the raw locator, <code>ratchet:tighten</code>.</li>
+          <li><strong>App-side</strong> → QA, with the agent, in the app repo: one small PR per selector. Add the name, delete the raw locator, <code>ratchet:tighten</code>. Dev reviews.</li>
           <li>Suppressions file shrinks in every PR. Nobody argues about "turning on lint". It's already on.</li>
         </ol>
       </section>
